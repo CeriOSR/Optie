@@ -7,7 +7,25 @@
 		<key>Optie.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>0</integer>
+			<integer>9</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>E0961FE81FAF8CAF007B5970</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>E0961FFF1FAF8CAF007B5970</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>E096200A1FAF8CAF007B5970</key>
+		<dict>
+			<key>primary</key>
+			<true/>
 		</dict>
 	</dict>
 </dict>
