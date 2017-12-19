@@ -138,7 +138,7 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
     func saveUserToDB(_ imageUrl: String) {
         guard let name = nameTextField.text, let location = locationTextField.text, let email = emailTextField.text else {return}
         guard let uid = Auth.auth().currentUser?.uid else {return}
-        let values = ["name": name, "location": location, "email": email, "imageURL": imageUrl]
+        let values = ["name": name, "location": location, "email": email, "imageUrl": imageUrl]
         let databaseRef = Database.database().reference().child("user").child(uid)
         databaseRef.updateChildValues(values, withCompletionBlock: { (error, reference) in
             if error != nil {

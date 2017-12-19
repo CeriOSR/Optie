@@ -12,7 +12,15 @@ import FBSDKLoginKit
 
 class ProfileController: UIViewController {
     
+    let setupViews = SetupViews()
     var user = OptieUser()
+    var fbUser : FbUser? {
+        didSet{
+            nameLabel.text = fbUser?.fbName
+            guard let imageUrl = fbUser?.imageUrl else {return}
+            self.userImage.loadEventImageUsingCacheWithUrlString(urlString: imageUrl)
+        }
+    }
     
     let containerView: UIView = {
         let view = UIView()
@@ -33,7 +41,7 @@ class ProfileController: UIViewController {
     
     let userImage : UIImageView = {
         let image = UIImageView()
-        image.contentMode = .scaleAspectFit
+        image.contentMode = .scaleAspectFill
         image.layer.borderWidth = 1.0
         image.layer.borderColor = UIColor.lightGray.cgColor
         image.layer.cornerRadius = 75
@@ -78,24 +86,27 @@ class ProfileController: UIViewController {
         
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupViews()
         fetchUser()
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        self.nameLabel.text = self.user.name
-        guard let imageUrl = self.user.imageUrl else {return}
-        print(imageUrl)
-        self.userImage.loadEventImageUsingCacheWithUrlString(urlString: imageUrl)
+        setupViewsProfileController()
+        self.nameLabel.text = self.fbUser?.fbName
+        if let imageUrl = self.fbUser?.imageUrl {
+            self.userImage.loadEventImageUsingCacheWithUrlString(urlString: imageUrl)
+        } else {
+            guard let imageUrl = self.user.imageUrl else {return}
+            self.userImage.loadEventImageUsingCacheWithUrlString(urlString: imageUrl)
+        }
     }
     
-    func setupViews() {
+    func setupViewsProfileController() {
         navigationItem.title = "Profile"
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogout))
         view.backgroundColor = .white
         
         view.addSubview(containerView)
-
+        
         let height = view.frame.height - 75
         let y = view.frame.height - height
         containerView.frame = CGRect(x: 8, y: y, width: view.frame.width - 16, height: height)
@@ -111,7 +122,7 @@ class ProfileController: UIViewController {
         containerView.addConstraintsWithVisualFormat(format: "H:|-100-[v0(150)]", views: userImage)
         containerView.addConstraintsWithVisualFormat(format: "H:|-80-[v0(200)]", views: directionLabel)
         containerView.addConstraintsWithVisualFormat(format: "H:[v0(100)]-10-|", views: proceedButton)
-
+        
         containerView.addConstraintsWithVisualFormat(format: "V:|-75-[v0(50)]-4-[v1(50)]-10-[v2(150)]-8-[v3(150)]", views: heyLabel, nameLabel, userImage, directionLabel)
         containerView.addConstraintsWithVisualFormat(format: "V:[v0(45)]-10-|", views: proceedButton)
     }
@@ -131,7 +142,9 @@ class ProfileController: UIViewController {
     @objc func presentSportsController() {
         let sportsController = SportsController()
         let navSportsController = UINavigationController(rootViewController: sportsController)
-        self.present(navSportsController, animated: true, completion: nil)
+        self.present(navSportsController, animated: true) {
+            sportsController.user = self.user
+        }
     }
     
     fileprivate func fetchUser() {
@@ -143,7 +156,7 @@ class ProfileController: UIViewController {
             self.user.name = dictionary["name"] as? String
             self.user.email = dictionary["email"] as? String
             self.user.location = dictionary["location"] as? String
-            self.user.imageUrl = dictionary["location"] as? String
+            self.user.imageUrl = dictionary["imageUrl"] as? String
             
         }, withCancel: nil)
     }

@@ -32,7 +32,7 @@ struct OptieUser {
 //    var location: String?
 //}
 
-struct skillLevelModel {
+struct SkillLevelModel {
     var skillLevel: Int?
     var skillQ1: Bool?
     var skillQ2: Bool?
@@ -41,7 +41,7 @@ struct skillLevelModel {
     var skillQ5: Bool?
 }
 
-struct availabilityModel {
+struct AvailabilityModel {
     var userType: String?
     var haveCar: Bool?
     var monday: Bool?

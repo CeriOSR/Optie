@@ -7,8 +7,18 @@
 //
 
 import UIKit
+import Firebase
 
 class SportsController: UIViewController {
+    
+    let profileController = ProfileController()
+    var user : OptieUser? {
+        didSet{
+            navigationItem.title = self.user?.email ?? "NIL"
+        }
+    }
+    var availability = AvailabilityModel()
+    
     
     let sportsContainerView: UIView = {
         let view = UIView()
@@ -164,24 +174,80 @@ class SportsController: UIViewController {
         button.layer.borderColor = UIColor.lightGray.cgColor
         button.layer.cornerRadius = 4
         button.layer.masksToBounds = true
-        button.addTarget(self, action: #selector(presentSkillLevelController), for: .touchUpInside)
+        button.addTarget(self, action: #selector(presentSkillLevelControllerWithAvailabilityVariable), for: .touchUpInside)
         return button
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
         setupViews()
     }
     
-    @objc func presentSkillLevelController() {
+    @objc func presentSkillLevelControllerWithAvailabilityVariable() {
+        
+        availability.userType = sportsSegmentControl.titleForSegment(at: sportsSegmentControl.selectedSegmentIndex)
+        if carSegmentControl.selectedSegmentIndex == 0 {
+            availability.haveCar = true
+        } else {
+            availability.haveCar = false
+        }
+        if mondaySwitch.isOn == true {
+            availability.monday = true
+        } else {
+            availability.monday = false
+        }
+        if tuesdaySwitch.isOn == true {
+            availability.tuesday = true
+        } else {
+            availability.tuesday = false
+        }
+        if wednesdaySwitch.isOn == true {
+            availability.wednesday = true
+        } else {
+            availability.wednesday = false
+        }
+        if thursdaySwitch.isOn == true {
+            availability.thursday = true
+        } else {
+            availability.thursday = false
+        }
+        if fridaySwitch.isOn == true {
+            availability.friday = true
+        } else {
+            availability.friday = false
+        }
+        if saturdaySwitch.isOn == true {
+            availability.saturday = true
+        } else {
+            availability.saturday = false
+        }
+        if sundaySwitch.isOn == true {
+            availability.sunday = true
+        } else {
+            availability.sunday = false
+        }
+                
         let skillLevelController = SkillLevelController()
         let navSkillLevelController = UINavigationController(rootViewController: skillLevelController)
-        self.present(navSkillLevelController, animated: true, completion: nil)
+        self.present(navSkillLevelController, animated: true) {
+            skillLevelController.availability = self.availability
+        }
+    }
+    
+    @objc func handleBack() {
+        let profileController = ProfileController()
+        let navProfileController = UINavigationController(rootViewController: profileController)
+        self.present(navProfileController, animated: true, completion: nil)
     }
     
     func setupViews() {
         view.backgroundColor = .white
         navigationItem.title = "Profile"
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(handleBack))
         view.addSubview(sportsContainerView)
         let height = view.frame.height - 75
         let y = view.frame.height - height
@@ -241,5 +307,23 @@ class SportsController: UIViewController {
         sportsContainerView.addConstraintsWithVisualFormat(format: "V:|-440-[v0]", views: sundaySwitch)
         sportsContainerView.addConstraintsWithVisualFormat(format: "V:[v0(45)]-10-|", views: proceedButton)
     }
- 
+    
+//    @objc func saveToDatabase() {
+//        guard let uid = Auth.auth().currentUser?.uid else {return}
+//        availability.userType = sportsSegmentControl.titleForSegment(at: sportsSegmentControl.selectedSegmentIndex)
+//        if carSegmentControl.selectedSegmentIndex == 0 {
+//            availability.haveCar = true
+//        }
+//        let values = ["userType": availability.userType!, "hasCar": availability.haveCar!] as [String : Any]
+//        let dataRef = Database.database().reference().child("SportsAndAvailability").child(uid)
+//        dataRef.updateChildValues(values) { (error, ref) in
+//            if error != nil {
+//                print("FAILED TO SAVE TO DATABASE", error ?? "unknown error")
+//            } else {
+//                let skillLevelController = SkillLevelController()
+//                let navSkillLevelController = UINavigationController(rootViewController: skillLevelController)
+//                self.present(navSkillLevelController, animated: true, completion: nil)
+//            }
+//        }
+//    }
 }

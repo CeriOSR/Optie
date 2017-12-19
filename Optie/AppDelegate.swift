@@ -22,9 +22,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.makeKeyAndVisible()
         let rootViewController = LoginController()
-//        let rootViewController = ProfileController()
-//        let navRootViewController = UINavigationController(rootViewController: rootViewController)
-//        window?.rootViewController = navRootViewController
+//        let layout = UICollectionViewFlowLayout()
+//        let availability = AvailabilityCollectionViewController(collectionViewLayout: layout)
+//        let navAvailability = UINavigationController(rootViewController: availability)
+//        let rootViewController = navAvailability
         window?.rootViewController = rootViewController
         FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
         return true

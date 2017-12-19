@@ -7,8 +7,22 @@
 //
 
 import UIKit
+import Firebase
 
 class SkillLevelController: UIViewController {
+    
+    var user = OptieUser()
+    var availability : AvailabilityModel? {
+        didSet{
+            navigationItem.title = self.availability?.userType
+            if self.availability?.userType == "Snowboard" {
+                skillLevelImageView.image = UIImage(named: "Snowboard 1")
+            } else {
+                skillLevelImageView.image = UIImage(named: "Ski 1")
+            }
+        }
+    }
+    var skillLevel = SkillLevelModel()
     
     let skillContainerView: UIView = {
         let view = UIView()
@@ -28,15 +42,17 @@ class SkillLevelController: UIViewController {
     
     let skillLevelImageView: UIImageView = {
         let image = UIImageView()
-        image.image = UIImage(named: "Logo")
+        image.backgroundColor = .gray
         return image
     }()
     
-    let skillLevelSlider: UISlider = {
+    lazy var skillLevelSlider: UISlider = {
         let slider = UISlider()
         slider.isUserInteractionEnabled = true
+        slider.value = 1
         slider.minimumValue = 1
         slider.maximumValue = 5
+        slider.addTarget(self, action: #selector(changeSliderValue), for: .valueChanged)
         return slider
     }()
     
@@ -136,18 +152,64 @@ class SkillLevelController: UIViewController {
         return button
     }()
     
-    @objc func handleSubmit() {
+    override func viewDidLoad() {
+        super.viewDidLoad()
         
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    override func viewDidAppear(_ animated: Bool) {
         setupViews()
+    }
+    
+    @objc func changeSliderValue() {
+        skillLevelSlider.value = roundf(self.skillLevelSlider.value)
+        let skill = round(skillLevelSlider.value)
+        if self.availability?.userType == "Snowboard" {
+            switch skill {
+            case 1 :
+                skillLevelImageView.image = UIImage(named: "Snowboard 1")
+            case 2 :
+                skillLevelImageView.image = UIImage(named: "Snowboard 2")
+            case 3 :
+                skillLevelImageView.image = UIImage(named: "Snowboard 3")
+            case 4 :
+                skillLevelImageView.image = UIImage(named: "Snowboard 4")
+            case 5 :
+                skillLevelImageView.image = UIImage(named: "Snowboard 5")
+            default:
+                skillLevelImageView.image = UIImage(named: "Snowboard 1")
+
+            }
+        } else if self.availability?.userType == "Ski" || self.availability?.userType == "Both"{
+            switch skill {
+            case 1 :
+                skillLevelImageView.image = UIImage(named: "Ski 1")
+            case 2 :
+                skillLevelImageView.image = UIImage(named: "Ski 2")
+            case 3 :
+                skillLevelImageView.image = UIImage(named: "Ski 3")
+            case 4 :
+                skillLevelImageView.image = UIImage(named: "Ski 4")
+            case 5 :
+                skillLevelImageView.image = UIImage(named: "Ski 5")
+            default:
+                skillLevelImageView.image = UIImage(named: "Ski 1")
+
+            }
+        }
+        
+    }
+    
+    @objc func handleBack() {
+        let sportsController = SportsController()
+        let navSportsController = UINavigationController(rootViewController: sportsController)
+        self.present(navSportsController, animated: true, completion: nil)
     }
     
     func setupViews() {
         view.backgroundColor = .white
         navigationItem.title = "Profile"
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(handleBack))
         
         view.addSubview(skillContainerView)
         let height = view.frame.height - 75
@@ -198,7 +260,76 @@ class SkillLevelController: UIViewController {
         skillContainerView.addConstraintsWithVisualFormat(format: "V:|-464-[v0(20)]", views: typeLabel5)
         skillContainerView.addConstraintsWithVisualFormat(format: "V:|-460-[v0]", views: typeSwitch5)
         skillContainerView.addConstraintsWithVisualFormat(format: "V:[v0(45)]-10-|", views: submitButton)
-
-        
     }
+    
+    func userSkillLevel() -> SkillLevelModel {
+        var skillLevel = SkillLevelModel()
+        
+        if typeSwitch1.isEnabled == true {
+            skillLevel.skillQ1 = true
+        } else {
+            skillLevel.skillQ1 = false
+        }
+        if typeSwitch2.isOn == true {
+            skillLevel.skillQ2 = true
+        } else {
+            skillLevel.skillQ2 = false
+        }
+        if typeSwitch3.isOn == true {
+            skillLevel.skillQ3 = true
+        } else {
+            skillLevel.skillQ3 = false
+        }
+        if typeSwitch4.isOn == true {
+            skillLevel.skillQ4 = true
+        } else {
+            skillLevel.skillQ4 = false
+        }
+        if typeSwitch5.isOn == true {
+            skillLevel.skillQ5 = true
+        } else {
+            skillLevel.skillQ5 = false
+        }
+        
+        return skillLevel
+    }
+    @objc func handleSubmit() {
+        saveProfileToDatabase()
+    }
+    func saveProfileToDatabase(){
+        let skillLevel = userSkillLevel()
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        let values = [
+            "skillLevel": skillLevel.skillLevel as Any,
+            "skillQ1": skillLevel.skillQ1 as Any,
+            "skillQ2": skillLevel.skillQ2 as Any,
+            "skillQ3": skillLevel.skillQ3 as Any,
+            "skillQ4": skillLevel.skillQ4 as Any,
+            "skillQ5": skillLevel.skillQ5 as Any,
+            "userType": self.availability?.userType as Any,
+            "haveCar": self.availability?.haveCar as Any,
+            "monday": self.availability?.monday as Any,
+            "tuesday": self.availability?.tuesday as Any,
+            "wednesday": self.availability?.wednesday as Any,
+            "thursday": self.availability?.thursday as Any,
+            "friday": self.availability?.friday as Any,
+            "saturday": self.availability?.saturday as Any,
+            "sunday" : self.availability?.sunday as Any
+        ] as [String: Any]
+        let profileRef = Database.database().reference().child("userProfile").child(uid)
+        profileRef.updateChildValues(values) { (error, ref) in
+            if error != nil {
+                print("Could not save profile", error ?? "unknown error")
+                return
+            }
+            //move on to next window
+            let layout = UICollectionViewFlowLayout()
+            let availabilityCollectionView = AvailabilityCollectionViewController(collectionViewLayout: layout)
+            let navAvailabilityCollectionView = UINavigationController(rootViewController: availabilityCollectionView)
+            self.present(navAvailabilityCollectionView, animated: true, completion: {
+                print("Success")
+            })
+        }
+    }
+    
 }

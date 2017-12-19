@@ -155,7 +155,7 @@ class LoginController: UIViewController, FBSDKLoginButtonDelegate, UITextFieldDe
             self.fbMember.fbId = fbUser["id"] as? String
             self.fbMember.fbName = fbUser["name"] as? String
             print(imageURL)
-            let user = ["email": self.fbMember.fbEmail, "id": self.fbMember.fbId, "name": self.fbMember.fbName, "imageUrl": self.fbMember.imageUrl]
+            let user = ["email": self.fbMember.fbEmail, "fbid": self.fbMember.fbId, "name": self.fbMember.fbName, "imageUrl": self.fbMember.imageUrl]
             self.saveUserToDatabase(user: user as! [String : String])
         }
     }
@@ -167,9 +167,16 @@ class LoginController: UIViewController, FBSDKLoginButtonDelegate, UITextFieldDe
             if error != nil {
                 print("Could not save user to firebase", error!)
             }
-            let profileController = ProfileController()
-            let navProfileController = UINavigationController(rootViewController: profileController)
-            self.present(navProfileController, animated: true, completion: nil)
+            self.checkIfUserProfileExist(uid: uid)
+            
+//            let layout = UICollectionViewFlowLayout()
+//            let availabilityCollectionView = AvailabilityCollectionViewController(collectionViewLayout: layout)
+//            let navAvailabilityCollectionView = UINavigationController(rootViewController: availabilityCollectionView)
+//            self.present(navAvailabilityCollectionView, animated: true, completion: {
+//                availabilityCollectionView.fbUser = self.fbMember
+//            })
+//
+//            //possibly fetch profile info and pass data to collectionView too
         }
     }
     
@@ -181,9 +188,13 @@ class LoginController: UIViewController, FBSDKLoginButtonDelegate, UITextFieldDe
                 self.popUpViewModel.createAlert(title: "Invalid email or password", message: "Email and password does not match")
                 return
             }
-            let profileController = ProfileController()
-            let navProfileController = UINavigationController(rootViewController: profileController)
-            self.present(navProfileController, animated: true, completion: nil)
+//            guard let uid = Auth.auth().currentUser?.uid else {return}
+//            self.checkIfUserProfileExist(uid: uid)
+            let layout = UICollectionViewFlowLayout()
+            let availabilityCollectionView = AvailabilityCollectionViewController(collectionViewLayout: layout)
+            let navAvailabilityCollectionView = UINavigationController(rootViewController: availabilityCollectionView)
+            self.present(navAvailabilityCollectionView, animated: true, completion: nil)
+            //possibly fetch profile info and pass data to collectionView
         }
     }
     
@@ -200,6 +211,61 @@ class LoginController: UIViewController, FBSDKLoginButtonDelegate, UITextFieldDe
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
+    }
+    
+    func checkIfUserProfileExist(uid: String) {
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        let profileRef = Database.database().reference().child("userProfile").child(uid)
+        profileRef.observeSingleEvent(of: .value, with: { (snapshot) in
+            
+            let dictionary = snapshot.value as? [String: AnyObject]
+            if dictionary != nil {
+                let layout = UICollectionViewFlowLayout()
+                let availabilityCollectionView = AvailabilityCollectionViewController(collectionViewLayout: layout)
+                let navAvailabilityCollectionView = UINavigationController(rootViewController: availabilityCollectionView)
+                self.present(navAvailabilityCollectionView, animated: true, completion: {
+                    availabilityCollectionView.fbUser = self.fbMember
+                })
+                //possibly fetch profile info and pass data to collectionView
+            } else {
+                let profileController = ProfileController()
+                let navProfileController = UINavigationController(rootViewController: profileController)
+                //self.present(navProfileController, animated: true, completion: nil)
+                self.present(navProfileController, animated: true, completion: {
+                    profileController.fbUser = self.fbMember
+                })
+            }
+        }, withCancel: nil)
+        
+//        profileRef.observeSingleEvent(of: .value, with: { (snapshot) in
+//            let snap = snapshot.value as! [String: Any]
+//            let profile: String?
+//            profile = snap["userType"] as? String
+//
+//
+//
+//
+//
+//
+//
+//
+//            if profile != nil {
+//                let layout = UICollectionViewFlowLayout()
+//                let availabilityCollectionView = AvailabilityCollectionViewController(collectionViewLayout: layout)
+//                let navAvailabilityCollectionView = UINavigationController(rootViewController: availabilityCollectionView)
+//                self.present(navAvailabilityCollectionView, animated: true, completion: {
+//                    availabilityCollectionView.fbUser = self.fbMember
+//                })
+//                //possibly fetch profile info and pass data to collectionView
+//            } else {
+//                let profileController = ProfileController()
+//                let navProfileController = UINavigationController(rootViewController: profileController)
+//                //self.present(navProfileController, animated: true, completion: nil)
+//                self.present(navProfileController, animated: true, completion: {
+//                    profileController.fbUser = self.fbMember
+//                })
+//            }
+//        }, withCancel: nil)
     }
 
 }
