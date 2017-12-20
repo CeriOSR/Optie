@@ -290,7 +290,6 @@ class SkillLevelController: UIViewController {
         } else {
             skillLevel.skillQ5 = false
         }
-        
         return skillLevel
     }
     @objc func handleSubmit() {
@@ -300,7 +299,7 @@ class SkillLevelController: UIViewController {
         let skillLevel = userSkillLevel()
         guard let uid = Auth.auth().currentUser?.uid else {return}
         let values = [
-            "skillLevel": skillLevel.skillLevel as Any,
+            "skillLevel": roundf(skillLevelSlider.value),
             "skillQ1": skillLevel.skillQ1 as Any,
             "skillQ2": skillLevel.skillQ2 as Any,
             "skillQ3": skillLevel.skillQ3 as Any,

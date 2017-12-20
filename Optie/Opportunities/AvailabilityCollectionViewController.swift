@@ -12,7 +12,7 @@ import Firebase
 
 private let reuseIdentifier = "Cell"
 
-class AvailabilityCollectionViewController: UICollectionViewController {
+class AvailabilityCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
 
     var fbUser : FbUser? {
         didSet{
@@ -25,6 +25,7 @@ class AvailabilityCollectionViewController: UICollectionViewController {
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogout))
         collectionView?.backgroundColor = .white
         self.collectionView!.register(AvailabilityCell.self, forCellWithReuseIdentifier: reuseIdentifier)
+        collectionView?.isScrollEnabled = true
 
     }
 
@@ -34,7 +35,7 @@ class AvailabilityCollectionViewController: UICollectionViewController {
 
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return 7
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -43,6 +44,14 @@ class AvailabilityCollectionViewController: UICollectionViewController {
         // Configure the cell
     
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 420 /*view.frame.width*/ /*500*/, height: 140)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsetsMake(0, 10, 0, -50)
     }
     
     @objc func handleLogout() {
@@ -57,6 +66,8 @@ class AvailabilityCollectionViewController: UICollectionViewController {
             return
         }
     }
+    
+    
 
 }
 

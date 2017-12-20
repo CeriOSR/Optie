@@ -21,11 +21,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         FirebaseApp.configure()
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.makeKeyAndVisible()
-        let rootViewController = LoginController()
-//        let layout = UICollectionViewFlowLayout()
-//        let availability = AvailabilityCollectionViewController(collectionViewLayout: layout)
-//        let navAvailability = UINavigationController(rootViewController: availability)
-//        let rootViewController = navAvailability
+//        let rootViewController = LoginController()
+        let layout = UICollectionViewFlowLayout()
+        let availability = AvailabilityCollectionViewController(collectionViewLayout: layout)
+        let navAvailability = UINavigationController(rootViewController: availability)
+        let rootViewController = navAvailability
         window?.rootViewController = rootViewController
         FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
         return true

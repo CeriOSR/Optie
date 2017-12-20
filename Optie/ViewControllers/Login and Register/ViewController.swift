@@ -237,35 +237,7 @@ class LoginController: UIViewController, FBSDKLoginButtonDelegate, UITextFieldDe
             }
         }, withCancel: nil)
         
-//        profileRef.observeSingleEvent(of: .value, with: { (snapshot) in
-//            let snap = snapshot.value as! [String: Any]
-//            let profile: String?
-//            profile = snap["userType"] as? String
-//
-//
-//
-//
-//
-//
-//
-//
-//            if profile != nil {
-//                let layout = UICollectionViewFlowLayout()
-//                let availabilityCollectionView = AvailabilityCollectionViewController(collectionViewLayout: layout)
-//                let navAvailabilityCollectionView = UINavigationController(rootViewController: availabilityCollectionView)
-//                self.present(navAvailabilityCollectionView, animated: true, completion: {
-//                    availabilityCollectionView.fbUser = self.fbMember
-//                })
-//                //possibly fetch profile info and pass data to collectionView
-//            } else {
-//                let profileController = ProfileController()
-//                let navProfileController = UINavigationController(rootViewController: profileController)
-//                //self.present(navProfileController, animated: true, completion: nil)
-//                self.present(navProfileController, animated: true, completion: {
-//                    profileController.fbUser = self.fbMember
-//                })
-//            }
-//        }, withCancel: nil)
+
     }
 
 }
