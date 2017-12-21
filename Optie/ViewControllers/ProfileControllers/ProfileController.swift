@@ -91,6 +91,8 @@ class ProfileController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         setupViewsProfileController()
+//        if let name = self.fbUser?.fbName ?? self.user.name
+        
         self.nameLabel.text = self.fbUser?.fbName
         if let imageUrl = self.fbUser?.imageUrl {
             self.userImage.loadEventImageUsingCacheWithUrlString(urlString: imageUrl)

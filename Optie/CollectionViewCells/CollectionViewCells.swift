@@ -47,7 +47,8 @@ class AvailabilityCell: BaseCell, UICollectionViewDataSource, UICollectionViewDe
     }()
     
     override func setupViews() {
-        backgroundColor = .white
+        
+        dayCollectionView.backgroundColor = UIColor(r: 24, g: 56, b: 98)
         addSubview(dayCollectionView)
         addSubview(dayLabel)
         
@@ -66,7 +67,6 @@ class AvailabilityCell: BaseCell, UICollectionViewDataSource, UICollectionViewDe
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: dayCell, for: indexPath) as! DayCell
-        
         return cell
     }
     
@@ -82,7 +82,7 @@ class AvailabilityCell: BaseCell, UICollectionViewDataSource, UICollectionViewDe
 class DayCell: BaseCell {
     
     override func setupViews() {
-        backgroundColor = .blue
+        backgroundColor = .black
     }
     
 }

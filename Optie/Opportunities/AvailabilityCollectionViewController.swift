@@ -23,10 +23,14 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogout))
-        collectionView?.backgroundColor = .white
+        collectionView?.backgroundColor = self.view.tintColor
         self.collectionView!.register(AvailabilityCell.self, forCellWithReuseIdentifier: reuseIdentifier)
         collectionView?.isScrollEnabled = true
 
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        checkIfUserIsLoggedIn()
     }
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -67,6 +71,13 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
         }
     }
     
+    func checkIfUserIsLoggedIn() {
+        let uid = Auth.auth().currentUser?.uid
+        if uid == nil {
+            let loginController = LoginController()
+            self.present(loginController, animated: true, completion: nil)
+        }
+    }
     
 
 }
