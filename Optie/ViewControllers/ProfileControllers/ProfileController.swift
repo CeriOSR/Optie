@@ -25,7 +25,7 @@ class ProfileController: UIViewController {
     let containerView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 6
-        view.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        view.backgroundColor = UIColor(r: 13, g: 31, b: 61)
         view.layer.masksToBounds = true
         return view
     }()
@@ -109,9 +109,12 @@ class ProfileController: UIViewController {
         
         view.addSubview(containerView)
         
-        let height = view.frame.height - 75
-        let y = view.frame.height - height
-        containerView.frame = CGRect(x: 8, y: y, width: view.frame.width - 16, height: height)
+//        let height = view.frame.height - 75
+//        let y = view.frame.height - height
+//        containerView.frame = CGRect(x: 8, y: y, width: view.frame.width - 16, height: height)
+        
+        view.addConstraintsWithVisualFormat(format: "H:|-10-[v0]-10-|", views: containerView)
+        view.addConstraintsWithVisualFormat(format: "V:|-100-[v0]-20-|", views: containerView)
         
         containerView.addSubview(heyLabel)
         containerView.addSubview(nameLabel)

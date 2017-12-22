@@ -15,6 +15,14 @@ class LoginController: UIViewController, FBSDKLoginButtonDelegate, UITextFieldDe
     var fbMember = FbUser()
     let popUpViewModel = PopupViewModel()
     
+    let containerView : UIView = {
+        let view = UIView()
+        view.layer.cornerRadius = 6
+        view.backgroundColor = UIColor(r: 13, g: 31, b: 61)
+        view.layer.masksToBounds = true
+        return view
+    }()
+    
     let emailTextField: UITextField = {
         let tf = UITextField()
         tf.placeholder = "Email"
@@ -92,25 +100,52 @@ class LoginController: UIViewController, FBSDKLoginButtonDelegate, UITextFieldDe
     }
 
     func setupViews() {
-        view.backgroundColor = .white
-        view.addSubview(emailTextField)
-        view.addSubview(passwordTextField)
-        view.addSubview(logoImage)
-        view.addSubview(appNameImage)
-        view.addSubview(loginButton)
-        view.addSubview(fBLoginButton)
-        view.addSubview(createAccountButton)
         
+        view.backgroundColor = self.view.tintColor
+        view.addSubview(containerView)
         
-        view.addConstraintsWithVisualFormat(format: "H:|-140-[v0(100)]", views: logoImage)
-        view.addConstraintsWithVisualFormat(format: "H:|-140-[v0(100)]", views: appNameImage)
-        view.addConstraintsWithVisualFormat(format: "H:|-8-[v0]-8-|", views: emailTextField)
-        view.addConstraintsWithVisualFormat(format: "H:|-8-[v0]-8-|", views: passwordTextField)
-        view.addConstraintsWithVisualFormat(format: "H:|-8-[v0]-8-|", views: loginButton)
-        view.addConstraintsWithVisualFormat(format: "H:|-8-[v0]-8-|", views: fBLoginButton)
-        view.addConstraintsWithVisualFormat(format: "H:|-8-[v0]-8-|", views: createAccountButton)
+        //        let height = view.frame.height - 75
+        //        let y = view.frame.height - height
+        //        containerView.frame = CGRect(x: 8, y: y, width: view.frame.width - 16, height: height)
+        
+        view.addConstraintsWithVisualFormat(format: "H:|-10-[v0]-10-|", views: containerView)
+        view.addConstraintsWithVisualFormat(format: "V:|-100-[v0]-20-|", views: containerView)
+        
 
-        view.addConstraintsWithVisualFormat(format: "V:|-100-[v0(100)]-4-[v1(50)]-46-[v2(46)]-4-[v3(46)]-50-[v4(46)]-10-[v5(46)]-10-[v6(46)]", views: logoImage, appNameImage, emailTextField, passwordTextField, loginButton, fBLoginButton, createAccountButton)
+        if #available(iOS 11, *) {
+            let guide = view.safeAreaLayoutGuide
+            NSLayoutConstraint.activate([
+                containerView.topAnchor.constraint(equalTo: guide.topAnchor)
+                ])
+        } else {
+            NSLayoutConstraint.activate([
+                containerView.topAnchor.constraint(equalTo: self.topLayoutGuide.bottomAnchor)
+                ])
+        }
+        NSLayoutConstraint.activate([
+            containerView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            containerView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+            containerView.heightAnchor.constraint(equalToConstant: 65)
+            ])
+        
+        containerView.addSubview(emailTextField)
+        containerView.addSubview(passwordTextField)
+        containerView.addSubview(logoImage)
+        containerView.addSubview(appNameImage)
+        containerView.addSubview(loginButton)
+        containerView.addSubview(fBLoginButton)
+        containerView.addSubview(createAccountButton)
+        
+        
+        containerView.addConstraintsWithVisualFormat(format: "H:|-130-[v0(100)]", views: logoImage)
+        containerView.addConstraintsWithVisualFormat(format: "H:|-130-[v0(100)]", views: appNameImage)
+        containerView.addConstraintsWithVisualFormat(format: "H:|-8-[v0]-8-|", views: emailTextField)
+        containerView.addConstraintsWithVisualFormat(format: "H:|-8-[v0]-8-|", views: passwordTextField)
+        containerView.addConstraintsWithVisualFormat(format: "H:|-8-[v0]-8-|", views: loginButton)
+        containerView.addConstraintsWithVisualFormat(format: "H:|-8-[v0]-8-|", views: fBLoginButton)
+        containerView.addConstraintsWithVisualFormat(format: "H:|-8-[v0]-8-|", views: createAccountButton)
+
+        view.addConstraintsWithVisualFormat(format: "V:|-50-[v0(100)]-4-[v1(50)]-46-[v2(46)]-4-[v3(46)]-45-[v4(46)]-10-[v5(46)]-10-[v6(46)]", views: logoImage, appNameImage, emailTextField, passwordTextField, loginButton, fBLoginButton, createAccountButton)
 
     }
 

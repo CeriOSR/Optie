@@ -16,7 +16,7 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
     let containerView : UIView = {
         let view = UIView()
         view.layer.cornerRadius = 6
-        view.backgroundColor = UIColor.gray.withAlphaComponent(0.5)
+        view.backgroundColor = UIColor(r: 13, g: 31, b: 61)
         view.layer.masksToBounds = true
         return view
     }()
@@ -98,24 +98,33 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
     }
     
     func setupViews() {
-        view.backgroundColor = .white
+        view.backgroundColor = self.view.tintColor
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(handleBack))
         
-        view.addSubview(userImage)
-        view.addSubview(nameTextField)
-        view.addSubview(locationTextField)
-        view.addSubview(emailTextField)
-        view.addSubview(passwordTextField)
-        view.addSubview(registerButton)
-
-        view.addConstraintsWithVisualFormat(format: "H:|-140-[v0(100)]", views: userImage)
-        view.addConstraintsWithVisualFormat(format: "H:|-8-[v0]-8-|", views: nameTextField)
-        view.addConstraintsWithVisualFormat(format: "H:|-8-[v0]-8-|", views: locationTextField)
-        view.addConstraintsWithVisualFormat(format: "H:|-8-[v0]-8-|", views: emailTextField)
-        view.addConstraintsWithVisualFormat(format: "H:|-8-[v0]-8-|", views: passwordTextField)
-        view.addConstraintsWithVisualFormat(format: "H:|-8-[v0]-8-|", views: registerButton)
+        view.addSubview(containerView)
         
-        view.addConstraintsWithVisualFormat(format: "V:|-100-[v0(100)]-46-[v1(46)]-4-[v2(46)]-4-[v3(46)]-4-[v4(46)]-50-[v5(46)]", views: userImage, nameTextField,locationTextField, emailTextField, passwordTextField, registerButton)
+//        let height = view.frame.height - 75
+//        let y = view.frame.height - height
+//        containerView.frame = CGRect(x: 8, y: y, width: view.frame.width - 16, height: height)
+        
+        view.addConstraintsWithVisualFormat(format: "H:|-10-[v0]-10-|", views: containerView)
+        view.addConstraintsWithVisualFormat(format: "V:|-100-[v0]-20-|", views: containerView)
+        
+        containerView.addSubview(userImage)
+        containerView.addSubview(nameTextField)
+        containerView.addSubview(locationTextField)
+        containerView.addSubview(emailTextField)
+        containerView.addSubview(passwordTextField)
+        containerView.addSubview(registerButton)
+
+        containerView.addConstraintsWithVisualFormat(format: "H:|-130-[v0(100)]", views: userImage)
+        containerView.addConstraintsWithVisualFormat(format: "H:|-8-[v0]-8-|", views: nameTextField)
+        containerView.addConstraintsWithVisualFormat(format: "H:|-8-[v0]-8-|", views: locationTextField)
+        containerView.addConstraintsWithVisualFormat(format: "H:|-8-[v0]-8-|", views: emailTextField)
+        containerView.addConstraintsWithVisualFormat(format: "H:|-8-[v0]-8-|", views: passwordTextField)
+        containerView.addConstraintsWithVisualFormat(format: "H:|-8-[v0]-8-|", views: registerButton)
+        
+        containerView.addConstraintsWithVisualFormat(format: "V:|-100-[v0(100)]-46-[v1(46)]-4-[v2(46)]-4-[v3(46)]-4-[v4(46)]-50-[v5(46)]", views: userImage, nameTextField,locationTextField, emailTextField, passwordTextField, registerButton)
     }
     
     @objc func handleBack() {

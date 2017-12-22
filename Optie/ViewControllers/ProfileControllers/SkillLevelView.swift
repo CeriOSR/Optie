@@ -212,10 +212,13 @@ class SkillLevelController: UIViewController {
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(handleBack))
         
         view.addSubview(skillContainerView)
-        let height = view.frame.height - 75
-        let y = view.frame.height - height
+//        let height = view.frame.height - 75
+//        let y = view.frame.height - height
+//
+//        skillContainerView.frame = CGRect(x: 8, y: y, width: view.frame.width - 16, height: height)
         
-        skillContainerView.frame = CGRect(x: 8, y: y, width: view.frame.width - 16, height: height)
+        view.addConstraintsWithVisualFormat(format: "H:|-10-[v0]-10-|", views: skillContainerView)
+        view.addConstraintsWithVisualFormat(format: "V:|-90-[v0]-20-|", views: skillContainerView)
         
         skillContainerView.addSubview(skillLevelLabel)
         skillContainerView.addSubview(skillLevelImageView)

@@ -249,9 +249,12 @@ class SportsController: UIViewController {
         navigationItem.title = "Profile"
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(handleBack))
         view.addSubview(sportsContainerView)
-        let height = view.frame.height - 75
-        let y = view.frame.height - height
-        sportsContainerView.frame = CGRect(x: 8, y: y, width: view.frame.width - 16, height: height)
+//        let height = view.frame.height - 75
+//        let y = view.frame.height - height
+//        sportsContainerView.frame = CGRect(x: 8, y: y, width: view.frame.width - 16, height: height)
+
+        view.addConstraintsWithVisualFormat(format: "H:|-10-[v0]-10-|", views: sportsContainerView)
+        view.addConstraintsWithVisualFormat(format: "V:|-100-[v0]-20-|", views: sportsContainerView)
         
         sportsContainerView.addSubview(sportsLabel)
         sportsContainerView.addSubview(sportsSegmentControl)
