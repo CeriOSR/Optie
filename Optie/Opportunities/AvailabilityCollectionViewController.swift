@@ -14,11 +14,16 @@ private let reuseIdentifier = "Cell"
 
 class AvailabilityCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
 
-    var fbUser : FbUser? {
+    var user: OptieUser? {
         didSet{
-            navigationItem.title = fbUser?.fbName
+            navigationItem.title = user?.name
         }
     }
+//    var fbUser : FbUser? {
+//        didSet{
+//            navigationItem.title = fbUser?.fbName
+//        }
+//    }
     
     override func viewDidLoad() {
         super.viewDidLoad()

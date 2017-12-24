@@ -8,29 +8,14 @@
 
 import Foundation
 
-struct FbUser {
-    var fbId: String?
-    var fbEmail: String?
-    var fbName: String?
-    var imageUrl: String?
-}
-
 struct OptieUser {
     var uid: String?
     var email: String?
     var name: String?
-    var imageUrl: String?
+    var fbId: String?
     var location: String?
+    var imageUrl: String?
 }
-
-//struct manualLoginUserModel {
-//    var uid: String?
-//    var userEmail: String?
-//    var userName: String?
-//    var imageUrl: String?
-//    var image: String?
-//    var location: String?
-//}
 
 struct SkillLevelModel {
     var skillLevel: Int?

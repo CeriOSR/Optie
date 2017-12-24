@@ -14,14 +14,7 @@ class ProfileController: UIViewController {
     
     let setupViews = SetupViews()
     var user = OptieUser()
-    var fbUser : FbUser? {
-        didSet{
-            nameLabel.text = fbUser?.fbName
-            guard let imageUrl = fbUser?.imageUrl else {return}
-            self.userImage.loadEventImageUsingCacheWithUrlString(urlString: imageUrl)
-        }
-    }
-    
+
     let containerView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 6
@@ -47,7 +40,7 @@ class ProfileController: UIViewController {
         image.layer.cornerRadius = 75
         image.layer.masksToBounds = true
         image.isUserInteractionEnabled = true
-        image.image = UIImage(named: "Logo")
+        image.image = UIImage(named: "PROFILE_DARK")
         return image
     }()
     
@@ -73,7 +66,8 @@ class ProfileController: UIViewController {
     
     lazy var proceedButton : UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Next >", for: .normal)
+        //button.setTitle("Next >", for: .normal)
+        button.setImage(#imageLiteral(resourceName: "Next"), for: .normal)
         button.backgroundColor = self.view.tintColor
         button.setTitleColor(.white, for: .normal)
         button.layer.borderWidth = 1.0
@@ -86,32 +80,22 @@ class ProfileController: UIViewController {
         
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupViewsProfileController()
         fetchUser()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         setupViewsProfileController()
-//        if let name = self.fbUser?.fbName ?? self.user.name
-        
-        self.nameLabel.text = self.fbUser?.fbName
-        if let imageUrl = self.fbUser?.imageUrl {
-            self.userImage.loadEventImageUsingCacheWithUrlString(urlString: imageUrl)
-        } else {
-            guard let imageUrl = self.user.imageUrl else {return}
-            self.userImage.loadEventImageUsingCacheWithUrlString(urlString: imageUrl)
-        }
+        fetchUser()
+    
     }
     
     func setupViewsProfileController() {
         navigationItem.title = "Profile"
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogout))
-        view.backgroundColor = .white
+        view.backgroundColor = self.view.tintColor
         
         view.addSubview(containerView)
-        
-//        let height = view.frame.height - 75
-//        let y = view.frame.height - height
-//        containerView.frame = CGRect(x: 8, y: y, width: view.frame.width - 16, height: height)
         
         view.addConstraintsWithVisualFormat(format: "H:|-10-[v0]-10-|", views: containerView)
         view.addConstraintsWithVisualFormat(format: "V:|-100-[v0]-20-|", views: containerView)
@@ -152,18 +136,33 @@ class ProfileController: UIViewController {
         }
     }
     
-    fileprivate func fetchUser() {
-        guard let uid = Auth.auth().currentUser?.uid else {return}
+    func fetchUser(){
+        guard let uid = Auth.auth().currentUser?.uid else {fatalError()}
         let userRef = Database.database().reference().child("user").child(uid)
         userRef.observeSingleEvent(of: .value, with: { (snapshot) in
             let dictionary = snapshot.value as! [String: Any]
-            self.user.uid = snapshot.key
-            self.user.name = dictionary["name"] as? String
-            self.user.email = dictionary["email"] as? String
-            self.user.location = dictionary["location"] as? String
-            self.user.imageUrl = dictionary["imageUrl"] as? String
-            
+            var user = OptieUser()
+            user.uid = snapshot.key
+            user.name = dictionary["name"] as? String
+            user.email = dictionary["email"] as? String
+            user.fbId = dictionary["fbId"] as? String
+            user.location = dictionary["location"] as? String
+            user.imageUrl = dictionary["imageUrl"] as? String
+            self.user = user
+            self.nameLabel.text = user.name
+            guard let imageUrl = user.imageUrl else {return}
+            self.userImage.loadEventImageUsingCacheWithUrlString(urlString: imageUrl)
+
         }, withCancel: nil)
+        
+       
     }
+//
+//    var uid: String
+//    var email: String?
+//    var name: String?
+//    var fbId: String?
+//    var location: String?
+//    var imageUrl: String?
     
 }

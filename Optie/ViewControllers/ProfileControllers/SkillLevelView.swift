@@ -11,7 +11,6 @@ import Firebase
 
 class SkillLevelController: UIViewController {
     
-    var user = OptieUser()
     var availability : AvailabilityModel? {
         didSet{
             navigationItem.title = self.availability?.userType
@@ -22,6 +21,7 @@ class SkillLevelController: UIViewController {
             }
         }
     }
+    var user: OptieUser?
     var skillLevel = SkillLevelModel()
     
     let skillContainerView: UIView = {
@@ -207,7 +207,7 @@ class SkillLevelController: UIViewController {
     }
     
     func setupViews() {
-        view.backgroundColor = .white
+        view.backgroundColor = self.view.tintColor
         navigationItem.title = "Profile"
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(handleBack))
         

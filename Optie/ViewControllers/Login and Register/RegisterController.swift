@@ -11,6 +11,7 @@ import Firebase
 
 class RegisterController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate {
     
+//    var user : OptieUser?
     let popupModel = PopupViewModel()
     
     let containerView : UIView = {
@@ -103,10 +104,6 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
         
         view.addSubview(containerView)
         
-//        let height = view.frame.height - 75
-//        let y = view.frame.height - height
-//        containerView.frame = CGRect(x: 8, y: y, width: view.frame.width - 16, height: height)
-        
         view.addConstraintsWithVisualFormat(format: "H:|-10-[v0]-10-|", views: containerView)
         view.addConstraintsWithVisualFormat(format: "V:|-100-[v0]-20-|", views: containerView)
         
@@ -147,16 +144,29 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
     func saveUserToDB(_ imageUrl: String) {
         guard let name = nameTextField.text, let location = locationTextField.text, let email = emailTextField.text else {return}
         guard let uid = Auth.auth().currentUser?.uid else {return}
-        let values = ["name": name, "location": location, "email": email, "imageUrl": imageUrl]
+        let values = ["fbId": "non-fbUser", "name": name, "location": location, "email": email, "imageUrl": imageUrl]
         let databaseRef = Database.database().reference().child("user").child(uid)
         databaseRef.updateChildValues(values, withCompletionBlock: { (error, reference) in
             if error != nil {
                 print("Failed to input to database", error ?? "unknown error")
                 return
             }
-            let profileController = ProfileController()
-            let navProfileController = UINavigationController(rootViewController: profileController)
-            self.present(navProfileController, animated: true, completion: nil)
+            
+//            self.user?.fbId = values["fbId"]
+//            self.user?.name = values["name"]
+//            self.user?.email = values["email"]
+//            self.user?.location = values["location"]
+//            self.user?.imageUrl = imageUrl
+//            self.user?.uid = uid
+            
+                let profileController = ProfileController()
+                let navProfileController = UINavigationController(rootViewController: profileController)
+                self.present(navProfileController, animated: true, completion: nil)
+//                self.present(navProfileController, animated: true, completion: {
+//                    guard let user = self.user else {return}
+//                    profileController.user = user
+//                })
+            
         })
     }
     

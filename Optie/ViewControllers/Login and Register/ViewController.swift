@@ -12,7 +12,8 @@ import Firebase
 
 class LoginController: UIViewController, FBSDKLoginButtonDelegate, UITextFieldDelegate {
     
-    var fbMember = FbUser()
+    var user = OptieUser()
+//    var fbMember = FbUser()
     let popUpViewModel = PopupViewModel()
     
     let containerView : UIView = {
@@ -104,13 +105,8 @@ class LoginController: UIViewController, FBSDKLoginButtonDelegate, UITextFieldDe
         view.backgroundColor = self.view.tintColor
         view.addSubview(containerView)
         
-        //        let height = view.frame.height - 75
-        //        let y = view.frame.height - height
-        //        containerView.frame = CGRect(x: 8, y: y, width: view.frame.width - 16, height: height)
-        
         view.addConstraintsWithVisualFormat(format: "H:|-10-[v0]-10-|", views: containerView)
         view.addConstraintsWithVisualFormat(format: "V:|-100-[v0]-20-|", views: containerView)
-        
 
         if #available(iOS 11, *) {
             let guide = view.safeAreaLayoutGuide
@@ -123,8 +119,8 @@ class LoginController: UIViewController, FBSDKLoginButtonDelegate, UITextFieldDe
                 ])
         }
         NSLayoutConstraint.activate([
-            containerView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-            containerView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+//            containerView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+//            containerView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
             containerView.heightAnchor.constraint(equalToConstant: 65)
             ])
         
@@ -182,15 +178,15 @@ class LoginController: UIViewController, FBSDKLoginButtonDelegate, UITextFieldDe
                 print("Failed graphRequest", error!)
                 return
             }
-
             let fbUser = result as! [String: Any]
             guard let imageURL = ((fbUser["picture"] as? [String: Any])?["data"] as? [String: Any])?["url"] as? String else {return}
-            self.fbMember.imageUrl = imageURL
-            self.fbMember.fbEmail = fbUser["email"] as? String
-            self.fbMember.fbId = fbUser["id"] as? String
-            self.fbMember.fbName = fbUser["name"] as? String
+            self.user.imageUrl = imageURL
+            self.user.email = fbUser["email"] as? String
+            self.user.fbId = fbUser["id"] as? String
+            self.user.name = fbUser["name"] as? String
+            self.user.location = "Location to be determined"
             print(imageURL)
-            let user = ["email": self.fbMember.fbEmail, "fbid": self.fbMember.fbId, "name": self.fbMember.fbName, "imageUrl": self.fbMember.imageUrl]
+            let user = ["email": self.user.email, "fbid": self.user.fbId, "name": self.user.name, "location": self.user.location, "imageUrl": self.user.imageUrl]
             self.saveUserToDatabase(user: user as! [String : String])
         }
     }
@@ -203,15 +199,6 @@ class LoginController: UIViewController, FBSDKLoginButtonDelegate, UITextFieldDe
                 print("Could not save user to firebase", error!)
             }
             self.checkIfUserProfileExist(uid: uid)
-            
-//            let layout = UICollectionViewFlowLayout()
-//            let availabilityCollectionView = AvailabilityCollectionViewController(collectionViewLayout: layout)
-//            let navAvailabilityCollectionView = UINavigationController(rootViewController: availabilityCollectionView)
-//            self.present(navAvailabilityCollectionView, animated: true, completion: {
-//                availabilityCollectionView.fbUser = self.fbMember
-//            })
-//
-//            //possibly fetch profile info and pass data to collectionView too
         }
     }
     
@@ -223,13 +210,8 @@ class LoginController: UIViewController, FBSDKLoginButtonDelegate, UITextFieldDe
                 self.popUpViewModel.createAlert(title: "Invalid email or password", message: "Email and password does not match")
                 return
             }
-//            guard let uid = Auth.auth().currentUser?.uid else {return}
-//            self.checkIfUserProfileExist(uid: uid)
-            let layout = UICollectionViewFlowLayout()
-            let availabilityCollectionView = AvailabilityCollectionViewController(collectionViewLayout: layout)
-            let navAvailabilityCollectionView = UINavigationController(rootViewController: availabilityCollectionView)
-            self.present(navAvailabilityCollectionView, animated: true, completion: nil)
-            //possibly fetch profile info and pass data to collectionView
+            guard let uid = Auth.auth().currentUser?.uid else {return}
+            self.checkIfUserProfileExist(uid: uid)
         }
     }
     
@@ -249,31 +231,33 @@ class LoginController: UIViewController, FBSDKLoginButtonDelegate, UITextFieldDe
     }
     
     func checkIfUserProfileExist(uid: String) {
-        guard let uid = Auth.auth().currentUser?.uid else {return}
         let profileRef = Database.database().reference().child("userProfile").child(uid)
         profileRef.observeSingleEvent(of: .value, with: { (snapshot) in
-            
             let dictionary = snapshot.value as? [String: AnyObject]
             if dictionary != nil {
                 let layout = UICollectionViewFlowLayout()
                 let availabilityCollectionView = AvailabilityCollectionViewController(collectionViewLayout: layout)
                 let navAvailabilityCollectionView = UINavigationController(rootViewController: availabilityCollectionView)
-                self.present(navAvailabilityCollectionView, animated: true, completion: {
-                    availabilityCollectionView.fbUser = self.fbMember
-                })
+                self.present(navAvailabilityCollectionView, animated: true, completion: nil)
                 //possibly fetch profile info and pass data to collectionView
             } else {
                 let profileController = ProfileController()
                 let navProfileController = UINavigationController(rootViewController: profileController)
-                //self.present(navProfileController, animated: true, completion: nil)
-                self.present(navProfileController, animated: true, completion: {
-                    profileController.fbUser = self.fbMember
-                })
+                self.present(navProfileController, animated: true, completion: nil)
+
             }
         }, withCancel: nil)
-        
-
     }
 
+
+    
+//    func handleTypeOfUser() {
+//        if let providerId = Auth.auth().currentUser?.providerID {
+//            if providerId == "facebook.com" {
+//
+//            }
+//        }
+//    }
+    
 }
 
