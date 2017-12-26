@@ -172,7 +172,7 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
     
     func saveImageToStorage() {
         let imageId = NSUUID().uuidString
-        guard let image = userImage.image, let uploadData = UIImageJPEGRepresentation(image, 0.3) else {return}
+        guard let image = userImage.image, let uploadData = UIImageJPEGRepresentation(image, 0.1) else {return}
         let storageRef = Storage.storage().reference().child("profileImage").child(imageId)
         storageRef.putData(uploadData, metadata: nil) { (metadata, error) in
             if error != nil {

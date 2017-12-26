@@ -324,6 +324,29 @@ class SkillLevelController: UIViewController {
                 print("Could not save profile", error ?? "unknown error")
                 return
             }
+            let availabilityRef = Database.database().reference().child("availability")
+            if self.availability?.monday == true {
+                availabilityRef.child("monday").updateChildValues([uid:1])
+            }
+            if self.availability?.tuesday == true {
+                availabilityRef.child("tuesday").updateChildValues([uid:1])
+            }
+            if self.availability?.wednesday == true {
+                availabilityRef.child("wednesday").updateChildValues([uid:1])
+            }
+            if self.availability?.thursday == true {
+                availabilityRef.child("thursday").updateChildValues([uid:1])
+            }
+            if self.availability?.friday == true {
+                availabilityRef.child("friday").updateChildValues([uid:1])
+            }
+            if self.availability?.saturday == true {
+                availabilityRef.child("saturday").updateChildValues([uid:1])
+            }
+            if self.availability?.sunday == true {
+                availabilityRef.child("sunday").updateChildValues([uid:1])
+            }
+
             //move on to next window
             let layout = UICollectionViewFlowLayout()
             let availabilityCollectionView = AvailabilityCollectionViewController(collectionViewLayout: layout)
@@ -333,5 +356,4 @@ class SkillLevelController: UIViewController {
             })
         }
     }
-    
 }

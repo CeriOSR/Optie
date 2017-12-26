@@ -148,21 +148,13 @@ class ProfileController: UIViewController {
             user.fbId = dictionary["fbId"] as? String
             user.location = dictionary["location"] as? String
             user.imageUrl = dictionary["imageUrl"] as? String
+            
             self.user = user
-            self.nameLabel.text = user.name
-            guard let imageUrl = user.imageUrl else {return}
-            self.userImage.loadEventImageUsingCacheWithUrlString(urlString: imageUrl)
-
+            DispatchQueue.main.async(execute: {
+                self.nameLabel.text = user.name
+                guard let imageUrl = user.imageUrl else {return}
+                self.userImage.loadEventImageUsingCacheWithUrlString(urlString: imageUrl)
+            })
         }, withCancel: nil)
-        
-       
     }
-//
-//    var uid: String
-//    var email: String?
-//    var name: String?
-//    var fbId: String?
-//    var location: String?
-//    var imageUrl: String?
-    
 }

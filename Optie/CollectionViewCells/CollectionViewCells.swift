@@ -20,14 +20,13 @@ class BaseCell: UICollectionViewCell {
     }
     
     func setupViews() {
-        
     }
 }
 
 class AvailabilityCell: BaseCell, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
     private  let dayCell = "dayCell"
-    
+    var availableOptieUsers = [OptieUser]()
     let dayLabel: UILabel = {
         let label = UILabel()
         label.text = "Wednesday:"
@@ -67,6 +66,12 @@ class AvailabilityCell: BaseCell, UICollectionViewDataSource, UICollectionViewDe
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: dayCell, for: indexPath) as! DayCell
+//        let user = availableOptieUsers[indexPath.item]
+//        cell.nameLabel.text = user.name
+//        if let imageUrl = user.imageUrl {
+//            cell.userImage.loadEventImageUsingCacheWithUrlString(urlString: imageUrl)
+//        }
+        
         return cell
     }
     
@@ -81,8 +86,33 @@ class AvailabilityCell: BaseCell, UICollectionViewDataSource, UICollectionViewDe
 
 class DayCell: BaseCell {
     
-    override func setupViews() {
-        backgroundColor = .black
-    }
+    let nameLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.textColor = .white
+        label.numberOfLines = 2
+        label.adjustsFontSizeToFitWidth = true
+        label.text = "gorgeous randy flamethrower"
+        return label
+    }()
     
+    let userImage: UIImageView = {
+        let image = UIImageView()
+        image.backgroundColor = .white
+        image.image = #imageLiteral(resourceName: "PROFILE_DARK")
+        image.layer.cornerRadius = 25
+        image.layer.masksToBounds = true
+        return image
+    }()
+    
+    
+    override func setupViews() {
+        backgroundColor = UIColor(r: 13, g: 31, b: 61)
+        addSubview(nameLabel)
+        addSubview(userImage)
+        
+        addConstraintsWithVisualFormat(format: "H:|-10-[v0]-10-|", views: nameLabel)
+        addConstraintsWithVisualFormat(format: "H:|-44-[v0]-44-|", views: userImage)
+        addConstraintsWithVisualFormat(format: "V:|-20-[v0]-10-[v1]-20-|", views: userImage, nameLabel)
+    }
 }
