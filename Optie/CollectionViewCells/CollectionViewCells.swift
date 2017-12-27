@@ -62,16 +62,12 @@ class AvailabilityCell: BaseCell, UICollectionViewDataSource, UICollectionViewDe
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 5
+        return self.users.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: dayCell, for: indexPath) as! DayCell
-        let user = users[indexPath.item]
-        cell.nameLabel.text = user.name
-        if let imageUrl = user.imageUrl {
-            cell.userImage.loadEventImageUsingCacheWithUrlString(urlString: imageUrl)
-        }
+        cell.user = self.users[indexPath.item]
         return cell
     }
     
@@ -86,6 +82,11 @@ class AvailabilityCell: BaseCell, UICollectionViewDataSource, UICollectionViewDe
 
 class DayCell: BaseCell {
     
+    var user = OptieUser() {
+        didSet{
+            nameLabel.text = user.name
+        }
+    }
     let nameLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center

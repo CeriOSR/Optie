@@ -13,11 +13,10 @@ import Firebase
 private let reuseIdentifier = "Cell"
 
 class AvailabilityCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
-
+    
+    var users = [OptieUser]()
     var days: [String]?
-//    var skill: SkillLevelModel?
-//    var availability: AvailabilityModel?
-    var availableUsers = [AvailabilableUsersList]()
+//    var availableUsers = [AvailabilableUsersList]()
     var user: OptieUser? {
         didSet{
             navigationItem.title = user?.name
@@ -52,6 +51,7 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! AvailabilityCell
         cell.dayLabel.text = self.days?[indexPath.item]
+        cell.users = self.users
         return cell
     }
     
@@ -157,12 +157,10 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
         }
 
         self.days = availableDays
-        print(availableDays)
         self.fetchAvailableUsers()
-        
-        DispatchQueue.main.async {
-            self.collectionView?.reloadData()
-        }
+//        DispatchQueue.main.async {
+//            self.collectionView?.reloadData()
+//        }
     }
     
     func fetchAvailableUsers() {
@@ -182,68 +180,14 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
                     user.location = dictionary["location"] as? String
                     user.imageUrl = dictionary["imageUrl"] as? String
 
-                    print("PRINT ME PLS *********************", user)
-                    var list = AvailabilableUsersList()
-                    list.day = day
-                    list.users?.append(user)
-                    self.availableUsers.append(list)
-                    let availablilityCell = AvailabilityCell()
-                    availablilityCell.users = list.users!
+                    
+                    self.users.append(user)
+                    print(self.users.count)
                     DispatchQueue.main.async(execute: {
                         self.collectionView?.reloadData()
                     })
                 }, withCancel: nil)
             }, withCancel: nil)
-        
-            
-//            ref.observeSingleEvent(of: .value, with: { (snapshot) in
-//                let key = snapshot.key
-//                print(snapshot.key)
-//                let userRef = Database.database().reference().child("user").child(key)
-//                userRef.observeSingleEvent(of: .value, with: { (snapshotUser) in
-//                    let dictionary = snapshotUser.value as! [String: Any]
-//                    var user = OptieUser()
-//                    user.uid = snapshotUser.key
-//                    user.name = dictionary["name"] as? String
-//                    user.email = dictionary["email"] as? String
-//                    user.fbId = dictionary["fbId"] as? String
-//                    user.location = dictionary["location"] as? String
-//                    user.imageUrl = dictionary["imageUrl"] as? String
-//
-//                    print("PRINT ME PLS *********************", user)
-//                    var list = AvailabilableUsersList()
-//                    list.day = day
-//                    list.users?.append(user)
-//                    self.availableUsers.append(list)
-//                    DispatchQueue.main.async(execute: {
-//                        self.collectionView?.reloadData()
-//                    })
-//                }, withCancel: nil)
-//            }, withCancel: nil)
-            
-//            dayRef.observe(.childAdded, with: { (snapshot) in
-//                let key = snapshot.key
-//                let userRef = Database.database().reference().child("user").child(key)
-//                userRef.observeSingleEvent(of: .value, with: { (snapshot) in
-//                    let dictionary = snapshot.value as! [String: Any]
-//                    var user = OptieUser()
-//                    user.uid = snapshot.key
-//                    user.name = dictionary["name"] as? String
-//                    user.email = dictionary["email"] as? String
-//                    user.fbId = dictionary["fbId"] as? String
-//                    user.location = dictionary["location"] as? String
-//                    user.imageUrl = dictionary["imageUrl"] as? String
-//
-//                    print("PRINT ME PLS *********************", user)
-//                    var list = AvailabilableUsersList()
-//                    list.day = day
-//                    list.users?.append(user)
-//                    self.availableUsers.append(list)
-//                    DispatchQueue.main.async(execute: {
-//                        self.collectionView?.reloadData()
-//                    })
-//                }, withCancel: nil)
-//            }, withCancel: nil)
         }
     }
 }
