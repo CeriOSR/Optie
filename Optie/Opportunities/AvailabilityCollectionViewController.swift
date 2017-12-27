@@ -17,7 +17,7 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
     var days: [String]?
 //    var skill: SkillLevelModel?
 //    var availability: AvailabilityModel?
-    var users = [OptieUser]()
+    var availableUsers = [AvailabilableUsersList]()
     var user: OptieUser? {
         didSet{
             navigationItem.title = user?.name
@@ -34,7 +34,6 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
     
     override func viewDidAppear(_ animated: Bool) {
         checkIfUserIsLoggedIn()
-//        fetchAvailableUsers()
     }
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -128,7 +127,6 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
             availability.friday = dictionary["friday"] as? Bool
             availability.saturday = dictionary["saturday"] as? Bool
             availability.sunday = dictionary["sunday"] as? Bool
-            print(availability)
             self.getAvailability(availability)
             
         }, withCancel: nil)
@@ -137,38 +135,92 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
     func getAvailability(_ availability: AvailabilityModel){
         var availableDays = [String]()
         if availability.monday == true {
-            availableDays.append("Monday")
+            availableDays.append("monday")
         }
         if availability.tuesday == true {
-            availableDays.append("Tuesday")
+            availableDays.append("tuesday")
         }
         if availability.wednesday == true {
-            availableDays.append("Wednesday")
+            availableDays.append("wednesday")
         }
         if availability.thursday == true{
-            availableDays.append("Thursday")
+            availableDays.append("thursday")
         }
         if availability.friday == true {
-            availableDays.append("Friday")
+            availableDays.append("friday")
         }
         if availability.saturday == true {
-            availableDays.append("Saturday")
+            availableDays.append("saturday")
         }
         if availability.sunday == true {
-            availableDays.append("Sunday")
+            availableDays.append("sunday")
         }
 
         self.days = availableDays
+        print(availableDays)
+        self.fetchAvailableUsers()
+        
         DispatchQueue.main.async {
             self.collectionView?.reloadData()
         }
     }
     
-//    func fetchAvailableUsers() {
-//        let ref = Database.database().reference().child("availability")
-//        guard let days = self.days else {return}
-//        for day in days {
-//            let dayRef = ref.child(day)
+    func fetchAvailableUsers() {
+        guard let days = self.days else {return}
+        for day in days {
+            let ref = Database.database().reference().child("availability").child(day)
+            ref.observe(.childAdded, with: { (snap) in
+                let key = snap.key
+                let userRef = Database.database().reference().child("user").child(key)
+                userRef.observeSingleEvent(of: .value, with: { (snapshotUser) in
+                    let dictionary = snapshotUser.value as! [String: Any]
+                    var user = OptieUser()
+                    user.uid = snapshotUser.key
+                    user.name = dictionary["name"] as? String
+                    user.email = dictionary["email"] as? String
+                    user.fbId = dictionary["fbId"] as? String
+                    user.location = dictionary["location"] as? String
+                    user.imageUrl = dictionary["imageUrl"] as? String
+
+                    print("PRINT ME PLS *********************", user)
+                    var list = AvailabilableUsersList()
+                    list.day = day
+                    list.users?.append(user)
+                    self.availableUsers.append(list)
+                    let availablilityCell = AvailabilityCell()
+                    availablilityCell.users = list.users!
+                    DispatchQueue.main.async(execute: {
+                        self.collectionView?.reloadData()
+                    })
+                }, withCancel: nil)
+            }, withCancel: nil)
+        
+            
+//            ref.observeSingleEvent(of: .value, with: { (snapshot) in
+//                let key = snapshot.key
+//                print(snapshot.key)
+//                let userRef = Database.database().reference().child("user").child(key)
+//                userRef.observeSingleEvent(of: .value, with: { (snapshotUser) in
+//                    let dictionary = snapshotUser.value as! [String: Any]
+//                    var user = OptieUser()
+//                    user.uid = snapshotUser.key
+//                    user.name = dictionary["name"] as? String
+//                    user.email = dictionary["email"] as? String
+//                    user.fbId = dictionary["fbId"] as? String
+//                    user.location = dictionary["location"] as? String
+//                    user.imageUrl = dictionary["imageUrl"] as? String
+//
+//                    print("PRINT ME PLS *********************", user)
+//                    var list = AvailabilableUsersList()
+//                    list.day = day
+//                    list.users?.append(user)
+//                    self.availableUsers.append(list)
+//                    DispatchQueue.main.async(execute: {
+//                        self.collectionView?.reloadData()
+//                    })
+//                }, withCancel: nil)
+//            }, withCancel: nil)
+            
 //            dayRef.observe(.childAdded, with: { (snapshot) in
 //                let key = snapshot.key
 //                let userRef = Database.database().reference().child("user").child(key)
@@ -181,16 +233,19 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
 //                    user.fbId = dictionary["fbId"] as? String
 //                    user.location = dictionary["location"] as? String
 //                    user.imageUrl = dictionary["imageUrl"] as? String
-//                    self.users.append(user)
-//                    let cell = AvailabilityCell()
-//                    cell.availableOptieUsers = self.users
+//
+//                    print("PRINT ME PLS *********************", user)
+//                    var list = AvailabilableUsersList()
+//                    list.day = day
+//                    list.users?.append(user)
+//                    self.availableUsers.append(list)
 //                    DispatchQueue.main.async(execute: {
 //                        self.collectionView?.reloadData()
 //                    })
 //                }, withCancel: nil)
 //            }, withCancel: nil)
-//        }
-//    }
+        }
+    }
 }
 
 

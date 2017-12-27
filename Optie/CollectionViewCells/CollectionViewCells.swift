@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 class BaseCell: UICollectionViewCell {
     
@@ -26,7 +27,7 @@ class BaseCell: UICollectionViewCell {
 class AvailabilityCell: BaseCell, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
     private  let dayCell = "dayCell"
-    var availableOptieUsers = [OptieUser]()
+    var users = [OptieUser]()
     let dayLabel: UILabel = {
         let label = UILabel()
         label.text = "Wednesday:"
@@ -66,12 +67,11 @@ class AvailabilityCell: BaseCell, UICollectionViewDataSource, UICollectionViewDe
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: dayCell, for: indexPath) as! DayCell
-//        let user = availableOptieUsers[indexPath.item]
-//        cell.nameLabel.text = user.name
-//        if let imageUrl = user.imageUrl {
-//            cell.userImage.loadEventImageUsingCacheWithUrlString(urlString: imageUrl)
-//        }
-        
+        let user = users[indexPath.item]
+        cell.nameLabel.text = user.name
+        if let imageUrl = user.imageUrl {
+            cell.userImage.loadEventImageUsingCacheWithUrlString(urlString: imageUrl)
+        }
         return cell
     }
     
