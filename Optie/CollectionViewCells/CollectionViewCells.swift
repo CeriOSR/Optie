@@ -27,6 +27,7 @@ class BaseCell: UICollectionViewCell {
 class AvailabilityCell: BaseCell, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
     private  let dayCell = "dayCell"
+    var availableUsers = UsersDayList()
     var users = [OptieUser]()
     let dayLabel: UILabel = {
         let label = UILabel()

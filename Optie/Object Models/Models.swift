@@ -38,7 +38,7 @@ struct AvailabilityModel {
     var sunday: Bool?
 }
 
-struct AvailabilableUsersList {
+struct UsersDayList {
     var day: String?
     var users: [OptieUser]?
 }

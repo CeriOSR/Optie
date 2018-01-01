@@ -326,25 +326,25 @@ class SkillLevelController: UIViewController {
             }
             let availabilityRef = Database.database().reference().child("availability")
             if self.availability?.monday == true {
-                availabilityRef.child("monday").updateChildValues([uid:1])
+                availabilityRef.child("Monday").updateChildValues([uid:"Monday"])
             }
             if self.availability?.tuesday == true {
-                availabilityRef.child("tuesday").updateChildValues([uid:1])
+                availabilityRef.child("Tuesday").updateChildValues([uid:"Tuesday"])
             }
             if self.availability?.wednesday == true {
-                availabilityRef.child("wednesday").updateChildValues([uid:1])
+                availabilityRef.child("Wednesday").updateChildValues([uid:"Wednesday"])
             }
             if self.availability?.thursday == true {
-                availabilityRef.child("thursday").updateChildValues([uid:1])
+                availabilityRef.child("Thursday").updateChildValues([uid:"Thursday"])
             }
             if self.availability?.friday == true {
-                availabilityRef.child("friday").updateChildValues([uid:1])
+                availabilityRef.child("Friday").updateChildValues([uid:"Friday"])
             }
             if self.availability?.saturday == true {
-                availabilityRef.child("saturday").updateChildValues([uid:1])
+                availabilityRef.child("Saturday").updateChildValues([uid:"Saturday"])
             }
             if self.availability?.sunday == true {
-                availabilityRef.child("sunday").updateChildValues([uid:1])
+                availabilityRef.child("Sunday").updateChildValues([uid:"Sunday"])
             }
 
             //move on to next window

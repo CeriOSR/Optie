@@ -14,9 +14,17 @@ private let reuseIdentifier = "Cell"
 
 class AvailabilityCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     
-    var users = [OptieUser]()
     var days: [String]?
-//    var availableUsers = [AvailabilableUsersList]()
+    var monday = [OptieUser]()
+    var sunday = [OptieUser]()
+    var saturday = [OptieUser]()
+    var friday = [OptieUser]()
+    var thursday = [OptieUser]()
+    var wednesday = [OptieUser]()
+    var tuesday = [OptieUser]()
+    var daysArray = [[OptieUser]]()
+    var availableUsers = UsersDayList()
+    var availableUsersArray = [UsersDayList]()
     var user: OptieUser? {
         didSet{
             navigationItem.title = user?.name
@@ -51,7 +59,9 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! AvailabilityCell
         cell.dayLabel.text = self.days?[indexPath.item]
-        cell.users = self.users
+        cell.users = self.daysArray[indexPath.item]
+        
+        
         return cell
     }
     
@@ -77,14 +87,12 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
     }
     
     func checkIfUserIsLoggedIn() {
-        
         if let uid = Auth.auth().currentUser?.uid {
             fetchUser(uid)
         } else {
             let loginController = LoginController()
             self.present(loginController, animated: true, completion: nil)
         }
-        
     }
     
     func fetchUser(_ uid: String){
@@ -135,60 +143,105 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
     func getAvailability(_ availability: AvailabilityModel){
         var availableDays = [String]()
         if availability.monday == true {
-            availableDays.append("monday")
+            availableDays.append("Monday")
         }
         if availability.tuesday == true {
-            availableDays.append("tuesday")
+            availableDays.append("Tuesday")
         }
         if availability.wednesday == true {
-            availableDays.append("wednesday")
+            availableDays.append("Wednesday")
         }
         if availability.thursday == true{
-            availableDays.append("thursday")
+            availableDays.append("Thursday")
         }
         if availability.friday == true {
-            availableDays.append("friday")
+            availableDays.append("Friday")
         }
         if availability.saturday == true {
-            availableDays.append("saturday")
+            availableDays.append("Saturday")
         }
         if availability.sunday == true {
-            availableDays.append("sunday")
+            availableDays.append("Sunday")
         }
-
         self.days = availableDays
-        self.fetchAvailableUsers()
-//        DispatchQueue.main.async {
-//            self.collectionView?.reloadData()
-//        }
+        for day in availableDays {
+            self.fetchUsers(day)
+        }
     }
     
-    func fetchAvailableUsers() {
-        guard let days = self.days else {return}
-        for day in days {
-            let ref = Database.database().reference().child("availability").child(day)
-            ref.observe(.childAdded, with: { (snap) in
-                let key = snap.key
-                let userRef = Database.database().reference().child("user").child(key)
-                userRef.observeSingleEvent(of: .value, with: { (snapshotUser) in
-                    let dictionary = snapshotUser.value as! [String: Any]
-                    var user = OptieUser()
-                    user.uid = snapshotUser.key
-                    user.name = dictionary["name"] as? String
-                    user.email = dictionary["email"] as? String
-                    user.fbId = dictionary["fbId"] as? String
-                    user.location = dictionary["location"] as? String
-                    user.imageUrl = dictionary["imageUrl"] as? String
-
-                    
-                    self.users.append(user)
-                    print(self.users.count)
-                    DispatchQueue.main.async(execute: {
-                        self.collectionView?.reloadData()
-                    })
-                }, withCancel: nil)
-            }, withCancel: nil)
+    func fetchUsers(_ day: String) {
+        let ref = Database.database().reference().child("availability").child(day)
+        ref.observe(.childAdded, with: { (snap) in
+            let key = snap.key
+            let valueDay = snap.value as! String
+            self.fetchSingleUser(key, valueDay: valueDay)
+        }, withCancel: nil)
+    }
+    
+    func fetchSingleUser(_ key: String, valueDay: String){
+        let userRef = Database.database().reference().child("user").child(key)
+        userRef.observeSingleEvent(of: .value, with: { (snapshotUser) in
+            let dictionary = snapshotUser.value as! [String: Any]
+            var user = OptieUser()
+            user.uid = snapshotUser.key
+            user.name = dictionary["name"] as? String
+            user.email = dictionary["email"] as? String
+            user.fbId = dictionary["fbId"] as? String
+            user.location = dictionary["location"] as? String
+            user.imageUrl = dictionary["imageUrl"] as? String
+            if user.uid != Auth.auth().currentUser?.uid {
+                switch valueDay {
+                case "Monday":
+                    self.monday.append(user)
+                    print("MONDAY", self.monday.count)
+                case "Tuesday":
+                    self.tuesday.append(user)
+                case "Wednesday":
+                    self.wednesday.append(user)
+                case "Thursday":
+                    self.thursday.append(user)
+                case "Friday":
+                    self.friday.append(user)
+                    print("FRIDAY", self.friday.count)
+                case "Saturday":
+                    self.saturday.append(user)
+                case "Sunday":
+                    self.sunday.append(user)
+                default:
+                    print("No available users")
+                }
+            }
+            DispatchQueue.main.async(execute: {
+                self.populateDaysArray()
+                self.collectionView?.reloadData()
+            })
+        }, withCancel: nil)
+    }
+    //FIGURE OUT WHERE TO PUT THIS METHOD IN THE FLOW
+    
+    func populateDaysArray() {
+        if monday.isEmpty == false {
+            self.daysArray.append(monday)
         }
+        if tuesday.isEmpty == false {
+            self.daysArray.append(tuesday)
+        }
+        if wednesday.isEmpty == false {
+            self.daysArray.append(wednesday)
+        }
+        if thursday.isEmpty == false {
+            self.daysArray.append(thursday)
+        }
+        if friday.isEmpty == false {
+            self.daysArray.append(friday)
+        }
+        if saturday.isEmpty == false {
+            self.daysArray.append(saturday)
+        }
+        if sunday.isEmpty == false {
+            self.daysArray.append(sunday)
+        }
+        
     }
 }
 
