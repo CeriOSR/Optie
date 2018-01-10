@@ -235,11 +235,15 @@ class LoginController: UIViewController, FBSDKLoginButtonDelegate, UITextFieldDe
         profileRef.observeSingleEvent(of: .value, with: { (snapshot) in
             let dictionary = snapshot.value as? [String: AnyObject]
             if dictionary != nil {
-                let layout = UICollectionViewFlowLayout()
-                let availabilityCollectionView = AvailabilityCollectionViewController(collectionViewLayout: layout)
-                let navAvailabilityCollectionView = UINavigationController(rootViewController: availabilityCollectionView)
-                self.present(navAvailabilityCollectionView, animated: true, completion: nil)
+//                let layout = UICollectionViewFlowLayout()
+//                let availabilityCollectionView = AvailabilityCollectionViewController(collectionViewLayout: layout)
+//                let navAvailabilityCollectionView = UINavigationController(rootViewController: availabilityCollectionView)
+//                self.present(navAvailabilityCollectionView, animated: true, completion: nil)
                 //possibly fetch profile info and pass data to collectionView
+                let tabBarController = TabBarController()
+                self.present(tabBarController, animated: true, completion: {
+                    print("Success")
+                })
             } else {
                 let profileController = ProfileController()
                 let navProfileController = UINavigationController(rootViewController: profileController)

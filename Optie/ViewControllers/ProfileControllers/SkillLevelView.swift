@@ -348,10 +348,14 @@ class SkillLevelController: UIViewController {
             }
 
             //move on to next window
-            let layout = UICollectionViewFlowLayout()
-            let availabilityCollectionView = AvailabilityCollectionViewController(collectionViewLayout: layout)
-            let navAvailabilityCollectionView = UINavigationController(rootViewController: availabilityCollectionView)
-            self.present(navAvailabilityCollectionView, animated: true, completion: {
+//            let layout = UICollectionViewFlowLayout()
+//            let availabilityCollectionView = AvailabilityCollectionViewController(collectionViewLayout: layout)
+//            let navAvailabilityCollectionView = UINavigationController(rootViewController: availabilityCollectionView)
+//            self.present(navAvailabilityCollectionView, animated: true, completion: {
+//                print("Success")
+//            })
+            let tabBarController = TabBarController()
+            self.present(tabBarController, animated: true, completion: {
                 print("Success")
             })
         }

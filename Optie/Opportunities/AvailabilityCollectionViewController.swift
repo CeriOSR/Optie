@@ -14,6 +14,7 @@ private let reuseIdentifier = "Cell"
 
 class AvailabilityCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     
+    var timer = Timer()
     var days: [String]?
     var monday = [OptieUser]()
     var sunday = [OptieUser]()
@@ -22,7 +23,14 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
     var thursday = [OptieUser]()
     var wednesday = [OptieUser]()
     var tuesday = [OptieUser]()
-    var daysArray = [[OptieUser]]()
+    var mondayUsers = UsersDayList()
+    var tuesdayUsers = UsersDayList()
+    var wednesdayUsers = UsersDayList()
+    var thursdayUsers = UsersDayList()
+    var fridayUsers = UsersDayList()
+    var saturdayUsers = UsersDayList()
+    var sundayUsers = UsersDayList()
+    var daysArray = [Array<Any>]()
     var availableUsers = UsersDayList()
     var availableUsersArray = [UsersDayList]()
     var user: OptieUser? {
@@ -37,9 +45,21 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
         collectionView?.backgroundColor = self.view.tintColor
         self.collectionView!.register(AvailabilityCell.self, forCellWithReuseIdentifier: reuseIdentifier)
         collectionView?.isScrollEnabled = true
+        
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        self.monday.removeAll()
+        self.tuesday.removeAll()
+        self.wednesday.removeAll()
+        self.thursday.removeAll()
+        self.friday.removeAll()
+        self.saturday.removeAll()
+        self.sunday.removeAll()
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        
         checkIfUserIsLoggedIn()
     }
 
@@ -52,21 +72,37 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
         guard let days = self.days else {
             return 0
         }
-        
         return days.count
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! AvailabilityCell
-        cell.dayLabel.text = self.days?[indexPath.item]
-        cell.users = self.daysArray[indexPath.item]
-        
+        let label = self.days![indexPath.item]
+        cell.dayLabel.text = label
+        switch label {
+        case "Monday":
+            cell.users = self.monday
+        case "Tuesday":
+            cell.users = self.tuesday
+        case "Wednesday":
+            cell.users = self.wednesday
+        case "Thursday":
+            cell.users = self.thursday
+        case "Friday":
+            cell.users = self.friday
+        case "Saturday":
+            cell.users = self.saturday
+        case "Sunday":
+            cell.users = self.sunday
+        default:
+            cell.users = []
+        }
         
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 420 /*view.frame.width*/ /*500*/, height: 140)
+        return CGSize(width: 420, height: 176)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
@@ -90,8 +126,16 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
         if let uid = Auth.auth().currentUser?.uid {
             fetchUser(uid)
         } else {
-            let loginController = LoginController()
-            self.present(loginController, animated: true, completion: nil)
+            do {
+                try Auth.auth().signOut()
+                let loginManager = FBSDKLoginManager()
+                loginManager.logOut()
+                let loginController = LoginController()
+                self.present(loginController, animated: true, completion: nil)
+            } catch let err {
+                print("Could not log out", err)
+                return
+            }
         }
     }
     
@@ -175,6 +219,7 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
             let key = snap.key
             let valueDay = snap.value as! String
             self.fetchSingleUser(key, valueDay: valueDay)
+            
         }, withCancel: nil)
     }
     
@@ -193,56 +238,90 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
                 switch valueDay {
                 case "Monday":
                     self.monday.append(user)
-                    print("MONDAY", self.monday.count)
+                    self.mondayUsers.day = "Monday"
+                    self.mondayUsers.users = self.monday
+                    self.availableUsersArray.append(self.mondayUsers)
                 case "Tuesday":
                     self.tuesday.append(user)
+                    self.tuesdayUsers.day = "Tuesday"
+                    self.tuesdayUsers.users = self.tuesday
+                    self.availableUsersArray.append(self.tuesdayUsers)
                 case "Wednesday":
                     self.wednesday.append(user)
+                    self.wednesdayUsers.day = "Wednesday"
+                    self.wednesdayUsers.users = self.wednesday
+                    self.availableUsersArray.append(self.wednesdayUsers)
                 case "Thursday":
                     self.thursday.append(user)
+                    self.thursdayUsers.day = "Thursday"
+                    self.thursdayUsers.users = self.thursday
+                    self.availableUsersArray.append(self.thursdayUsers)
                 case "Friday":
                     self.friday.append(user)
-                    print("FRIDAY", self.friday.count)
+                    self.fridayUsers.day = "Friday"
+                    self.fridayUsers.users = self.friday
+                    self.availableUsersArray.append(self.fridayUsers)
                 case "Saturday":
                     self.saturday.append(user)
+                    self.saturdayUsers.day = "Saturday"
+                    self.saturdayUsers.users = self.saturday
+                    self.availableUsersArray.append(self.saturdayUsers)
                 case "Sunday":
                     self.sunday.append(user)
+                    self.sundayUsers.day = "Sunday"
+                    self.sundayUsers.users = self.sunday
+                    self.availableUsersArray.append(self.sundayUsers)
                 default:
                     print("No available users")
                 }
             }
+//            self.populateDaysArray()
             DispatchQueue.main.async(execute: {
-                self.populateDaysArray()
-                self.collectionView?.reloadData()
+                self.timer.invalidate()
+//                self.timer = Timer(timeInterval: 1.0, target: self, selector: #selector(self.reloadCollectionView), userInfo: nil, repeats: false)
+                self.timer = Timer(timeInterval: 1, repeats: false, block: { (timer) in
+                    DispatchQueue.main.async {
+                        self.collectionView?.reloadData()
+                    }
+                })
+                self.timer.fire()
             })
         }, withCancel: nil)
     }
+   
+    @objc func reloadCollectionView() {
+        DispatchQueue.main.async {
+            self.collectionView?.reloadData()
+        }
+    }
+    
+    //TRY TO CHANGE DAYSARRAY INTO A DICTIONARY...
     //FIGURE OUT WHERE TO PUT THIS METHOD IN THE FLOW
     
-    func populateDaysArray() {
-        if monday.isEmpty == false {
-            self.daysArray.append(monday)
-        }
-        if tuesday.isEmpty == false {
-            self.daysArray.append(tuesday)
-        }
-        if wednesday.isEmpty == false {
-            self.daysArray.append(wednesday)
-        }
-        if thursday.isEmpty == false {
-            self.daysArray.append(thursday)
-        }
-        if friday.isEmpty == false {
-            self.daysArray.append(friday)
-        }
-        if saturday.isEmpty == false {
-            self.daysArray.append(saturday)
-        }
-        if sunday.isEmpty == false {
-            self.daysArray.append(sunday)
-        }
-        
-    }
+//    func populateDaysArray() {
+//        if monday.isEmpty == false {
+//            self.daysArray.append(monday)
+//        }
+//        if tuesday.isEmpty == false {
+//            self.daysArray.append(tuesday)
+//        }
+//        if wednesday.isEmpty == false {
+//            self.daysArray.append(wednesday)
+//        }
+//        if thursday.isEmpty == false {
+//            self.daysArray.append(thursday)
+//        }
+//        if friday.isEmpty == false {
+//            self.daysArray.append(friday)
+//        }
+//        if saturday.isEmpty == false {
+//            self.daysArray.append(saturday)
+//        }
+//        if sunday.isEmpty == false {
+//            self.daysArray.append(sunday)
+//        }
+//
+//    }
 }
 
 

@@ -28,10 +28,19 @@ class AvailabilityCell: BaseCell, UICollectionViewDataSource, UICollectionViewDe
     
     private  let dayCell = "dayCell"
     var availableUsers = UsersDayList()
-    var users = [OptieUser]()
+    var users = [OptieUser](){
+        didSet{
+            
+            //PUT A TIMER ON RELOAD HERE
+            DispatchQueue.main.async(execute: {
+                
+                self.dayCollectionView.reloadData()
+            })
+            
+        }
+    }
     let dayLabel: UILabel = {
         let label = UILabel()
-        label.text = "Wednesday:"
         return label
     }()
     
@@ -68,7 +77,10 @@ class AvailabilityCell: BaseCell, UICollectionViewDataSource, UICollectionViewDe
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: dayCell, for: indexPath) as! DayCell
-        cell.user = self.users[indexPath.item]
+        let user: OptieUser = self.users[indexPath.item]
+        cell.nameLabel.text = user.name
+        guard let imageUrl = user.imageUrl else {return cell}
+        cell.userImage.loadEventImageUsingCacheWithUrlString(urlString: imageUrl)
         return cell
     }
     
@@ -79,22 +91,24 @@ class AvailabilityCell: BaseCell, UICollectionViewDataSource, UICollectionViewDe
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return UIEdgeInsetsMake(0, 4, 0, 4)
     }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        //go to clicked user's profile here.
+    }
+    
+    override func prepareForReuse() {
+        self.dayLabel.text = ""
+    }
 }
 
 class DayCell: BaseCell {
     
-    var user = OptieUser() {
-        didSet{
-            nameLabel.text = user.name
-        }
-    }
     let nameLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
         label.textColor = .white
         label.numberOfLines = 2
         label.adjustsFontSizeToFitWidth = true
-        label.text = "gorgeous randy flamethrower"
         return label
     }()
     
@@ -102,7 +116,7 @@ class DayCell: BaseCell {
         let image = UIImageView()
         image.backgroundColor = .white
         image.image = #imageLiteral(resourceName: "PROFILE_DARK")
-        image.layer.cornerRadius = 25
+        image.layer.cornerRadius = 35
         image.layer.masksToBounds = true
         return image
     }()
@@ -114,7 +128,73 @@ class DayCell: BaseCell {
         addSubview(userImage)
         
         addConstraintsWithVisualFormat(format: "H:|-10-[v0]-10-|", views: nameLabel)
-        addConstraintsWithVisualFormat(format: "H:|-44-[v0]-44-|", views: userImage)
-        addConstraintsWithVisualFormat(format: "V:|-20-[v0]-10-[v1]-20-|", views: userImage, nameLabel)
+        addConstraintsWithVisualFormat(format: "H:|-34-[v0(70)]|", views: userImage)
+        addConstraintsWithVisualFormat(format: "V:|-36-[v0(70)]", views: userImage)
+        addConstraintsWithVisualFormat(format: "V:[v0(40)]-10-|", views: nameLabel)
+    }
+    
+    override func prepareForReuse() {
+        nameLabel.text = ""
+        userImage.image = #imageLiteral(resourceName: "PROFILE_DARK")
+    }
+}
+
+class MessageListCell: BaseCell {
+    
+    let containerView: UIView = {
+        let container = UIView()
+        container.backgroundColor = UIColor(r: 13, g: 31, b: 61)
+        container.layer.cornerRadius = 10
+        container.layer.masksToBounds = true
+        return container
+    }()
+    
+    let userImage: UIImageView = {
+        let image = UIImageView()
+        image.layer.cornerRadius = 30
+        image.layer.masksToBounds = true
+        image.image = #imageLiteral(resourceName: "PROFILE_DARK")
+        return image
+    }()
+    
+    let messageView: UITextView = {
+        let tv = UITextView()
+        tv.backgroundColor = UIColor(r: 13, g: 31, b: 61)
+        tv.textColor = .white
+        tv.text = "I snowboard, surfboard, ski and all the good stuff in the worlds. Well no not really but I could do it..."
+        return tv
+    }()
+    
+    override func setupViews() {
+        
+        addSubview(containerView)
+        containerView.addSubview(userImage)
+        containerView.addSubview(messageView)
+        
+        addConstraintsWithVisualFormat(format: "H:|[v0]|", views: containerView)
+        addConstraintsWithVisualFormat(format: "V:|[v0]|", views: containerView)
+        
+        containerView.addConstraintsWithVisualFormat(format: "H:|-4-[v0(62)]-2-[v1]-4-|", views: userImage, messageView)
+        containerView.addConstraintsWithVisualFormat(format: "V:|-4-[v0]-4-|", views: userImage)
+        containerView.addConstraintsWithVisualFormat(format: "V:|-2-[v0]-2-|", views: messageView)
+        
+    }
+}
+
+class NewMessageCell: BaseCell {
+    
+    let containerView: UIView = {
+        let container = UIView()
+        container.backgroundColor = UIColor(r: 13, g: 31, b: 61)
+        container.layer.cornerRadius = 10
+        container.layer.masksToBounds = true
+        return container
+    }()
+    
+    override func setupViews() {
+        addSubview(containerView)
+        
+        addConstraintsWithVisualFormat(format: "H:|[v0]|", views: containerView)
+        addConstraintsWithVisualFormat(format: "V:|[v0]|", views: containerView)
     }
 }

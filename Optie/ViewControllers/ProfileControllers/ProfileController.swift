@@ -67,7 +67,7 @@ class ProfileController: UIViewController {
     lazy var proceedButton : UIButton = {
         let button = UIButton(type: .system)
         //button.setTitle("Next >", for: .normal)
-        button.setImage(#imageLiteral(resourceName: "Next"), for: .normal)
+        button.setImage(#imageLiteral(resourceName: "Next").withRenderingMode(.alwaysOriginal), for: .normal)
         button.backgroundColor = self.view.tintColor
         button.setTitleColor(.white, for: .normal)
         button.layer.borderWidth = 1.0
