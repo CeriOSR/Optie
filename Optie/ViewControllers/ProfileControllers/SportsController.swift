@@ -167,7 +167,7 @@ class SportsController: UIViewController {
     
     lazy var proceedButton : UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Next >", for: .normal)
+        button.setImage(#imageLiteral(resourceName: "Next").withRenderingMode(.alwaysOriginal), for: .normal)
         button.backgroundColor = self.view.tintColor
         button.setTitleColor(.white, for: .normal)
         button.layer.borderWidth = 1.0
@@ -246,15 +246,18 @@ class SportsController: UIViewController {
     
     func setupViews() {
         view.backgroundColor = self.view.tintColor
-        navigationItem.title = "Profile"
+//        navigationItem.title = "Profile"
+        navigationController?.navigationBar.backgroundColor = self.view.tintColor
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(handleBack))
         view.addSubview(sportsContainerView)
 //        let height = view.frame.height - 75
 //        let y = view.frame.height - height
 //        sportsContainerView.frame = CGRect(x: 8, y: y, width: view.frame.width - 16, height: height)
 
-        view.addConstraintsWithVisualFormat(format: "H:|-10-[v0]-10-|", views: sportsContainerView)
-        view.addConstraintsWithVisualFormat(format: "V:|-100-[v0]-20-|", views: sportsContainerView)
+//        view.addConstraintsWithVisualFormat(format: "H:|-10-[v0]-10-|", views: sportsContainerView)
+//        view.addConstraintsWithVisualFormat(format: "V:|-100-[v0]-20-|", views: sportsContainerView)
+
+        sportsContainerView.anchors(top: view.safeTopAnchor, bottom: view.safeBottomAnchor, left: view.safeLeftAnchor, right: view.safeRightAnchor, paddingTop: 10, paddingBottom: -10, paddingLeft: 10, paddingRight: -10)
         
         sportsContainerView.addSubview(sportsLabel)
         sportsContainerView.addSubview(sportsSegmentControl)

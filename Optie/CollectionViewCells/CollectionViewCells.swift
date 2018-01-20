@@ -26,17 +26,21 @@ class BaseCell: UICollectionViewCell {
 
 class AvailabilityCell: BaseCell, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
+    var timer = Timer()
+    var availabilityController : AvailabilityCollectionViewController?
     private  let dayCell = "dayCell"
     var availableUsers = UsersDayList()
     var users = [OptieUser](){
         didSet{
             
             //PUT A TIMER ON RELOAD HERE
-            DispatchQueue.main.async(execute: {
-                
-                self.dayCollectionView.reloadData()
-            })
-            
+//            timer.invalidate()
+//            timer.fire()
+//            timer = Timer(timeInterval: 0.2, repeats: false, block: { (timer) in
+                DispatchQueue.main.async(execute: {
+                    self.dayCollectionView.reloadData()
+                })
+//            })
         }
     }
     let dayLabel: UILabel = {
@@ -81,6 +85,7 @@ class AvailabilityCell: BaseCell, UICollectionViewDataSource, UICollectionViewDe
         cell.nameLabel.text = user.name
         guard let imageUrl = user.imageUrl else {return cell}
         cell.userImage.loadEventImageUsingCacheWithUrlString(urlString: imageUrl)
+        
         return cell
     }
     
@@ -93,10 +98,14 @@ class AvailabilityCell: BaseCell, UICollectionViewDataSource, UICollectionViewDe
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        //go to clicked user's profile here.
+        
+        let user = self.users[indexPath.item]
+        availabilityController?.showChosenUserController(user: user)
+        
     }
     
     override func prepareForReuse() {
+        super.prepareForReuse()
         self.dayLabel.text = ""
     }
 }
@@ -134,12 +143,30 @@ class DayCell: BaseCell {
     }
     
     override func prepareForReuse() {
+        super.prepareForReuse()
         nameLabel.text = ""
-        userImage.image = #imageLiteral(resourceName: "PROFILE_DARK")
+        userImage.image = nil
     }
 }
 
 class MessageListCell: BaseCell {
+    
+    var message = Message() {
+        didSet{
+//            guard let reciever = message.reciever else {return}
+//            let userRef = Database.database().reference().child("user").child(reciever)
+//            userRef.observeSingleEvent(of: .value, with: { (snapshot) in
+//                let dictionary = snapshot.value as! [String: Any]
+//                var user = OptieUser()
+//                user.name = dictionary["name"] as? String
+//                user.imageUrl = dictionary["imageUrl"] as? String
+//                DispatchQueue.main.async(execute: {
+//                    self.userNameLabel.text = user.name
+//                    self.userImage.loadEventImageUsingCacheWithUrlString(urlString: user.imageUrl!)
+//                })
+//            }, withCancel: nil)
+        }
+    }
     
     let containerView: UIView = {
         let container = UIView()
@@ -151,38 +178,65 @@ class MessageListCell: BaseCell {
     
     let userImage: UIImageView = {
         let image = UIImageView()
-        image.layer.cornerRadius = 30
+        image.layer.cornerRadius = 32
         image.layer.masksToBounds = true
         image.image = #imageLiteral(resourceName: "PROFILE_DARK")
         return image
     }()
     
-    let messageView: UITextView = {
-        let tv = UITextView()
-        tv.backgroundColor = UIColor(r: 13, g: 31, b: 61)
-        tv.textColor = .white
-        tv.text = "I snowboard, surfboard, ski and all the good stuff in the worlds. Well no not really but I could do it..."
-        return tv
+    let userNameLabel: UILabel = {
+        let label = UILabel()
+        label.font.withSize(16)
+        label.textColor = .white
+        return label
+    }()
+    
+    let messageLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.numberOfLines = 0
+        label.font.withSize(8)
+        return label
+    }()
+    
+    let dateLabel: UILabel = {
+        let label = UILabel()
+        label.backgroundColor = UIColor.lightGray
+        label.textColor = .white
+        label.font.withSize(8)
+        label.text = "HH:MM:SS AA"
+        return label
     }()
     
     override func setupViews() {
         
         addSubview(containerView)
         containerView.addSubview(userImage)
-        containerView.addSubview(messageView)
+        containerView.addSubview(userNameLabel)
+        containerView.addSubview(messageLabel)
+//        containerView.addSubview(dateLabel)
         
-        addConstraintsWithVisualFormat(format: "H:|[v0]|", views: containerView)
-        addConstraintsWithVisualFormat(format: "V:|[v0]|", views: containerView)
+        //TRY USING ANCHORS FOR CONTAINERVIEW
+        containerView.anchors(top: self.topAnchor, bottom: self.bottomAnchor, left: self.leftAnchor, right: self.rightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 6, paddingRight: -6)
         
-        containerView.addConstraintsWithVisualFormat(format: "H:|-4-[v0(62)]-2-[v1]-4-|", views: userImage, messageView)
-        containerView.addConstraintsWithVisualFormat(format: "V:|-4-[v0]-4-|", views: userImage)
-        containerView.addConstraintsWithVisualFormat(format: "V:|-2-[v0]-2-|", views: messageView)
+        userImage.anchors(top: containerView.topAnchor, bottom: containerView.bottomAnchor, left: containerView.leftAnchor, right: containerView.rightAnchor, paddingTop: 6, paddingBottom: -6, paddingLeft: 10, paddingRight: -290)
+        userNameLabel.anchors(top: containerView.topAnchor, bottom: containerView.bottomAnchor, left: userImage.rightAnchor, right: containerView.safeRightAnchor, paddingTop: 2, paddingBottom: -20, paddingLeft: 4, paddingRight: -18, height: 30)
+        messageLabel.anchors(top: userNameLabel.bottomAnchor, bottom: containerView.bottomAnchor, left: userImage.rightAnchor, right: containerView.rightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 4, paddingRight: -90)
+//        dateLabel.anchors(top: userNameLabel.bottomAnchor, bottom: containerView.bottomAnchor, left: messageLabel.rightAnchor, right: containerView.rightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 4, paddingRight: -18)
         
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        messageLabel.text = nil
+        userImage.image = nil
     }
 }
 
 class NewMessageCell: BaseCell {
     
+    var message : Message?
+    var user : OptieUser?
     let containerView: UIView = {
         let container = UIView()
         container.backgroundColor = UIColor(r: 13, g: 31, b: 61)
@@ -191,10 +245,24 @@ class NewMessageCell: BaseCell {
         return container
     }()
     
-    override func setupViews() {
-        addSubview(containerView)
-        
-        addConstraintsWithVisualFormat(format: "H:|[v0]|", views: containerView)
-        addConstraintsWithVisualFormat(format: "V:|[v0]|", views: containerView)
+    let userImage: UIImageView = {
+        let image = UIImageView()
+        image.layer.cornerRadius = 26
+        image.layer.masksToBounds = true
+        return image
+    }()
+    
+    let chatTextView: UITextView = {
+        let tv = UITextView()
+        tv.isEditable = false
+        tv.backgroundColor = UIColor(r: 13, g: 31, b: 61)
+        tv.textColor = .white
+        return tv
+    }()
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        userImage.image = nil
+        chatTextView.text = nil
     }
 }

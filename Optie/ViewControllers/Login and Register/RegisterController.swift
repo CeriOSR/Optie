@@ -100,12 +100,16 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
     
     func setupViews() {
         view.backgroundColor = self.view.tintColor
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(handleBack))
+        navigationController?.navigationBar.backgroundColor = .clear
+//        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(handleBack))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "BACK").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(handleBack))
         
         view.addSubview(containerView)
         
-        view.addConstraintsWithVisualFormat(format: "H:|-10-[v0]-10-|", views: containerView)
-        view.addConstraintsWithVisualFormat(format: "V:|-100-[v0]-20-|", views: containerView)
+//        view.addConstraintsWithVisualFormat(format: "H:|-10-[v0]-10-|", views: containerView)
+//        view.addConstraintsWithVisualFormat(format: "V:|-100-[v0]-20-|", views: containerView)
+
+        containerView.anchors(top: view.safeTopAnchor, bottom: view.safeBottomAnchor, left: view.safeLeftAnchor, right: view.safeRightAnchor, paddingTop: 10, paddingBottom: -10, paddingLeft: 10, paddingRight: -10)
         
         containerView.addSubview(userImage)
         containerView.addSubview(nameTextField)

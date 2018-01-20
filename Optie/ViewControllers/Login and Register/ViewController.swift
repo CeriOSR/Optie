@@ -108,21 +108,23 @@ class LoginController: UIViewController, FBSDKLoginButtonDelegate, UITextFieldDe
         view.addConstraintsWithVisualFormat(format: "H:|-10-[v0]-10-|", views: containerView)
         view.addConstraintsWithVisualFormat(format: "V:|-100-[v0]-20-|", views: containerView)
 
-        if #available(iOS 11, *) {
-            let guide = view.safeAreaLayoutGuide
-            NSLayoutConstraint.activate([
-                containerView.topAnchor.constraint(equalTo: guide.topAnchor)
-                ])
-        } else {
-            NSLayoutConstraint.activate([
-                containerView.topAnchor.constraint(equalTo: self.topLayoutGuide.bottomAnchor)
-                ])
-        }
-        NSLayoutConstraint.activate([
-//            containerView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-//            containerView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
-            containerView.heightAnchor.constraint(equalToConstant: 65)
-            ])
+//        if #available(iOS 11, *) {
+//            let guide = view.safeAreaLayoutGuide
+//            NSLayoutConstraint.activate([
+//                containerView.topAnchor.constraint(equalTo: guide.topAnchor)
+//                ])
+//        } else {
+//            NSLayoutConstraint.activate([
+//                containerView.topAnchor.constraint(equalTo: self.topLayoutGuide.bottomAnchor)
+//                ])
+//        }
+//        NSLayoutConstraint.activate([
+////            containerView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+////            containerView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+//            containerView.heightAnchor.constraint(equalToConstant: 65)
+//            ])
+        
+        containerView.anchors(top: view.safeTopAnchor, bottom: view.safeBottomAnchor, left: view.safeLeftAnchor, right: view.safeRightAnchor, paddingTop: 10, paddingBottom: -10, paddingLeft: 10, paddingRight: -10)
         
         containerView.addSubview(emailTextField)
         containerView.addSubview(passwordTextField)

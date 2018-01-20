@@ -42,3 +42,10 @@ struct UsersDayList {
     var day: String?
     var users: [OptieUser]?
 }
+
+struct Message {
+    var date: String?
+    var message: String?
+    var sender: String?
+    var reciever: String?
+}

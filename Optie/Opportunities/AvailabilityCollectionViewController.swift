@@ -33,6 +33,8 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
     var daysArray = [Array<Any>]()
     var availableUsers = UsersDayList()
     var availableUsersArray = [UsersDayList]()
+    var availability = AvailabilityModel()
+    var skill = SkillLevelModel()
     var user: OptieUser? {
         didSet{
             navigationItem.title = user?.name
@@ -59,7 +61,15 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        
+//        do {
+//            try Auth.auth().signOut()
+//        } catch let err {
+//            print(err)
+//        }
+//        checkIfUserIsLoggedIn()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
         checkIfUserIsLoggedIn()
     }
 
@@ -97,6 +107,7 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
         default:
             cell.users = []
         }
+        cell.availabilityController = self
         
         return cell
     }
@@ -107,6 +118,14 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return UIEdgeInsetsMake(0, 10, 0, -50)
+    }
+    
+    func showChosenUserController(user: OptieUser) {
+        let chosenProfileController = ChosenUserProfileController()
+        chosenProfileController.availability = self.availability
+        chosenProfileController.chosenUser = user
+        chosenProfileController.skill = self.skill
+        navigationController?.pushViewController(chosenProfileController, animated: true)
     }
     
     @objc func handleLogout() {
@@ -179,6 +198,8 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
             availability.friday = dictionary["friday"] as? Bool
             availability.saturday = dictionary["saturday"] as? Bool
             availability.sunday = dictionary["sunday"] as? Bool
+            self.skill = skill
+            self.availability = availability
             self.getAvailability(availability)
             
         }, withCancel: nil)
@@ -275,10 +296,15 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
                     print("No available users")
                 }
             }
-//            self.populateDaysArray()
+//            self.timer.invalidate()
+//            self.timer.fire()
+//            self.timer = Timer(timeInterval: 0.2, repeats: false, block: { (timer) in
+//                DispatchQueue.main.async(execute: {
+//                    self.collectionView?.reloadData()
+//                })
+//            })
             DispatchQueue.main.async(execute: {
                 self.timer.invalidate()
-//                self.timer = Timer(timeInterval: 1.0, target: self, selector: #selector(self.reloadCollectionView), userInfo: nil, repeats: false)
                 self.timer = Timer(timeInterval: 1, repeats: false, block: { (timer) in
                     DispatchQueue.main.async {
                         self.collectionView?.reloadData()
@@ -294,34 +320,6 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
             self.collectionView?.reloadData()
         }
     }
-    
-    //TRY TO CHANGE DAYSARRAY INTO A DICTIONARY...
-    //FIGURE OUT WHERE TO PUT THIS METHOD IN THE FLOW
-    
-//    func populateDaysArray() {
-//        if monday.isEmpty == false {
-//            self.daysArray.append(monday)
-//        }
-//        if tuesday.isEmpty == false {
-//            self.daysArray.append(tuesday)
-//        }
-//        if wednesday.isEmpty == false {
-//            self.daysArray.append(wednesday)
-//        }
-//        if thursday.isEmpty == false {
-//            self.daysArray.append(thursday)
-//        }
-//        if friday.isEmpty == false {
-//            self.daysArray.append(friday)
-//        }
-//        if saturday.isEmpty == false {
-//            self.daysArray.append(saturday)
-//        }
-//        if sunday.isEmpty == false {
-//            self.daysArray.append(sunday)
-//        }
-//
-//    }
 }
 
 

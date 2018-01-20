@@ -10,15 +10,15 @@
 		51D549BEC51132B4CF0E7935 /* Pods_OptieTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7DB0D52888C5FE6198DB11F /* Pods_OptieTests.framework */; };
 		5CC29B294015499FD61FCB65 /* Pods_Optie.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3396D2B85378B840CA17CBC6 /* Pods_Optie.framework */; };
 		AFD049D82BA50A2D215BF55A /* Pods_OptieUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB6AD7712B05ACD178E1630E /* Pods_OptieUITests.framework */; };
-		E005B23A1FCE148E00BA2362 /* SetupViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = E005B2391FCE148E00BA2362 /* SetupViews.swift */; };
-		E005B23B1FCE148E00BA2362 /* SetupViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = E005B2391FCE148E00BA2362 /* SetupViews.swift */; };
-		E005B23C1FCE148E00BA2362 /* SetupViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = E005B2391FCE148E00BA2362 /* SetupViews.swift */; };
 		E00690881FE6F70100C4E94A /* AvailabilityCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E00690871FE6F70100C4E94A /* AvailabilityCollectionViewController.swift */; };
 		E00690891FE6F70100C4E94A /* AvailabilityCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E00690871FE6F70100C4E94A /* AvailabilityCollectionViewController.swift */; };
 		E006908A1FE6F70100C4E94A /* AvailabilityCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E00690871FE6F70100C4E94A /* AvailabilityCollectionViewController.swift */; };
 		E006908D1FE6F8C900C4E94A /* CollectionViewCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = E006908C1FE6F8C900C4E94A /* CollectionViewCells.swift */; };
 		E006908E1FE6F8C900C4E94A /* CollectionViewCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = E006908C1FE6F8C900C4E94A /* CollectionViewCells.swift */; };
 		E006908F1FE6F8C900C4E94A /* CollectionViewCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = E006908C1FE6F8C900C4E94A /* CollectionViewCells.swift */; };
+		E04753E920069605004EEFBB /* ChosenUserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E04753E820069605004EEFBB /* ChosenUserProfile.swift */; };
+		E04753EA20069605004EEFBB /* ChosenUserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E04753E820069605004EEFBB /* ChosenUserProfile.swift */; };
+		E04753EB20069605004EEFBB /* ChosenUserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E04753E820069605004EEFBB /* ChosenUserProfile.swift */; };
 		E05F36441FB8FC3F001898CE /* PopupsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E05F36431FB8FC3F001898CE /* PopupsModel.swift */; };
 		E05F36451FB8FC3F001898CE /* PopupsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E05F36431FB8FC3F001898CE /* PopupsModel.swift */; };
 		E05F36461FB8FC3F001898CE /* PopupsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E05F36431FB8FC3F001898CE /* PopupsModel.swift */; };
@@ -86,9 +86,9 @@
 		92AB2450466651FDA2935A2D /* Pods-OptieUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OptieUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-OptieUITests/Pods-OptieUITests.release.xcconfig"; sourceTree = "<group>"; };
 		9841147523160720340C2F82 /* Pods-Optie.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Optie.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Optie/Pods-Optie.debug.xcconfig"; sourceTree = "<group>"; };
 		A7DB0D52888C5FE6198DB11F /* Pods_OptieTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OptieTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		E005B2391FCE148E00BA2362 /* SetupViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupViews.swift; sourceTree = "<group>"; };
 		E00690871FE6F70100C4E94A /* AvailabilityCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailabilityCollectionViewController.swift; sourceTree = "<group>"; };
 		E006908C1FE6F8C900C4E94A /* CollectionViewCells.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewCells.swift; sourceTree = "<group>"; };
+		E04753E820069605004EEFBB /* ChosenUserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChosenUserProfile.swift; sourceTree = "<group>"; };
 		E05F36431FB8FC3F001898CE /* PopupsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupsModel.swift; sourceTree = "<group>"; };
 		E06E96311FB7F25600F13C0D /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		E06E96351FB807CF00F13C0D /* RegisterController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterController.swift; sourceTree = "<group>"; };
@@ -185,6 +185,13 @@
 			path = CollectionViewCells;
 			sourceTree = "<group>";
 		};
+		E062A35A2013AA3B00B76BCA /* View */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
 		E06E962E1FB7F1CC00F13C0D /* Object Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -224,7 +231,7 @@
 				E07BAC661FB838FA008C1A52 /* ProfileController.swift */,
 				E07BAC6A1FB83920008C1A52 /* SportsController.swift */,
 				E07BAC6E1FB83940008C1A52 /* SkillLevelView.swift */,
-				E005B2391FCE148E00BA2362 /* SetupViews.swift */,
+				E04753E820069605004EEFBB /* ChosenUserProfile.swift */,
 			);
 			path = ProfileControllers;
 			sourceTree = "<group>";
@@ -263,6 +270,7 @@
 		E0961FEB1FAF8CAF007B5970 /* Optie */ = {
 			isa = PBXGroup;
 			children = (
+				E062A35A2013AA3B00B76BCA /* View */,
 				E006908B1FE6F8AD00C4E94A /* CollectionViewCells */,
 				E00690861FE6F6A100C4E94A /* Opportunities */,
 				E06E962E1FB7F1CC00F13C0D /* Object Models */,
@@ -609,10 +617,10 @@
 			files = (
 				E05F36441FB8FC3F001898CE /* PopupsModel.swift in Sources */,
 				E0D7A4031FFEF9DA009550B9 /* NewMessagesCollectionViewController.swift in Sources */,
+				E04753E920069605004EEFBB /* ChosenUserProfile.swift in Sources */,
 				E07353041FFD575A00BF77D4 /* MessageListController.swift in Sources */,
 				E07BAC6B1FB83920008C1A52 /* SportsController.swift in Sources */,
 				E07352FF1FFD45C900BF77D4 /* TabBarController.swift in Sources */,
-				E005B23A1FCE148E00BA2362 /* SetupViews.swift in Sources */,
 				E07BAC671FB838FA008C1A52 /* ProfileController.swift in Sources */,
 				E0961FEF1FAF8CAF007B5970 /* ViewController.swift in Sources */,
 				E0961FED1FAF8CAF007B5970 /* AppDelegate.swift in Sources */,
@@ -632,9 +640,9 @@
 			files = (
 				E006908E1FE6F8C900C4E94A /* CollectionViewCells.swift in Sources */,
 				E06E96331FB7F25600F13C0D /* Models.swift in Sources */,
+				E04753EA20069605004EEFBB /* ChosenUserProfile.swift in Sources */,
 				E07BAC6C1FB83920008C1A52 /* SportsController.swift in Sources */,
 				E0D7A4041FFEF9DA009550B9 /* NewMessagesCollectionViewController.swift in Sources */,
-				E005B23B1FCE148E00BA2362 /* SetupViews.swift in Sources */,
 				E07BAC701FB83940008C1A52 /* SkillLevelView.swift in Sources */,
 				E07353001FFD45C900BF77D4 /* TabBarController.swift in Sources */,
 				E096201F1FAF922E007B5970 /* ViewExtensions.swift in Sources */,
@@ -652,9 +660,9 @@
 			files = (
 				E006908F1FE6F8C900C4E94A /* CollectionViewCells.swift in Sources */,
 				E06E96341FB7F25600F13C0D /* Models.swift in Sources */,
+				E04753EB20069605004EEFBB /* ChosenUserProfile.swift in Sources */,
 				E07BAC6D1FB83920008C1A52 /* SportsController.swift in Sources */,
 				E0D7A4051FFEF9DA009550B9 /* NewMessagesCollectionViewController.swift in Sources */,
-				E005B23C1FCE148E00BA2362 /* SetupViews.swift in Sources */,
 				E07BAC711FB83940008C1A52 /* SkillLevelView.swift in Sources */,
 				E07353011FFD45C900BF77D4 /* TabBarController.swift in Sources */,
 				E09620201FAF922E007B5970 /* ViewExtensions.swift in Sources */,
