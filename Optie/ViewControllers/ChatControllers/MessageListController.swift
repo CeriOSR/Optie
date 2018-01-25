@@ -49,22 +49,37 @@ class MessageListController: UICollectionViewController, UICollectionViewDelegat
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        
         return UIEdgeInsetsMake(0, 6, 0, 6)
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let layout = UICollectionViewFlowLayout()
-        let newMessageController = NewMessagesCollectionViewController(collectionViewLayout: layout)
-        let navNewMessageController = UINavigationController(rootViewController: newMessageController)
-        
-        present(navNewMessageController, animated: true) {
-            //PASS INDEXPATH USER DATA HERE
-            
-        }
+        let message = messages[indexPath.item]
+        fetchChosenUserAndPresentNewMessageController(message: message)
     }
     
-    func fetchMessages() {
+    private func fetchChosenUserAndPresentNewMessageController(message: Message) {
+        guard let chatPartnerId = message.chatPartnerId() else {return}
+        let chosenUserRef = Database.database().reference().child("user").child(chatPartnerId)
+        chosenUserRef.observeSingleEvent(of: .value, with: { (snapshot) in
+            let dictionary = snapshot.value as! [String: Any]
+            print(dictionary)
+            var chosenUser = OptieUser()
+            chosenUser.uid = snapshot.key 
+            chosenUser.name = dictionary["name"] as? String
+            chosenUser.email = dictionary["email"] as? String
+            chosenUser.fbId = dictionary["fbId"] as? String
+            chosenUser.location = dictionary["location"] as? String
+            chosenUser.imageUrl = dictionary["imageUrl"] as? String
+            let layout = UICollectionViewFlowLayout()
+            let newMessageController = NewMessagesCollectionViewController(collectionViewLayout: layout)
+            let navNewMessageController = UINavigationController(rootViewController: newMessageController)
+            self.present(navNewMessageController, animated: true) {
+                newMessageController.chosenUser = chosenUser
+            }
+        }, withCancel: nil)
+    }
+    
+    private func fetchMessages() {
         guard let uid = Auth.auth().currentUser?.uid else {return}
         let currentUserMessageRef = Database.database().reference().child("messagesRef").child(uid)
         currentUserMessageRef.observe(.childAdded, with: { (snap) in
@@ -82,14 +97,9 @@ class MessageListController: UICollectionViewController, UICollectionViewDelegat
                 guard let reciever = message.reciever else {return}
                 self.messageDictionary[reciever] = message
                 self.messages = Array(self.messageDictionary.values)
-//                self.timer.invalidate()
-//                self.timer.fire()
-//                self.timer = Timer(timeInterval: 0.2, repeats: false, block: { (timer) in
-                    DispatchQueue.main.async(execute: {
-                        self.collectionView?.reloadData()
-                    })
-//                })
-            
+                DispatchQueue.main.async(execute: {
+                    self.collectionView?.reloadData()
+                })
             }, withCancel: nil)
         }, withCancel: nil)
     }

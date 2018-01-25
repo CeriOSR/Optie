@@ -13,6 +13,7 @@ private let reuseIdentifier = "Cell"
 
 class NewMessagesCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     
+    let window = UIWindow(frame: UIScreen.main.bounds )
     var timer = Timer()
     var messages = [Message]()
     let popupModel = PopupViewModel()
@@ -30,6 +31,7 @@ class NewMessagesCollectionViewController: UICollectionViewController, UICollect
     
     let chatTextField: UITextField = {
         let tf = UITextField()
+        tf.allowsEditingTextAttributes = true
         tf.placeholder = "message..."
         tf.textColor = .white
         return tf
@@ -46,7 +48,7 @@ class NewMessagesCollectionViewController: UICollectionViewController, UICollect
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Messages", style: .plain, target: self, action: #selector(handleBack))
         collectionView?.backgroundColor = self.view.tintColor
         view.addSubview(containerView)
-        containerView.anchors(top: collectionView?.safeBottomAnchor, bottom: view.safeBottomAnchor, left: view.safeLeftAnchor, right: view.safeRightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, height: 50)
+        containerView.anchors(top: self.collectionView?.safeBottomAnchor, bottom: self.view.safeBottomAnchor, left: self.view.safeLeftAnchor, right: self.view.safeRightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, height: 50)
         containerView.addSubview(chatTextField)
         containerView.addSubview(sendButton)
         containerView.addConstraintsWithVisualFormat(format: "H:|-2-[v0]-4-[v1(60)]-2-|", views: chatTextField, sendButton)
@@ -57,15 +59,41 @@ class NewMessagesCollectionViewController: UICollectionViewController, UICollect
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-//        fetchMessages()
         self.collectionView!.register(NewMessageCell.self, forCellWithReuseIdentifier: reuseIdentifier)
+        collectionView?.keyboardDismissMode = .interactive
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        setupView()
         fetchMessages()
     }
+    
+//    override var inputAccessoryView: UIView?
+//    {
+//        get{
+//            let containerView = UIView()
+//            containerView.backgroundColor = .gray
+//            containerView.translatesAutoresizingMaskIntoConstraints = false
+//            containerView.frame = CGRect(x:0, y: 100, width: view.frame.width, height: 50)
+////            containerView.bottomAnchor.constraintEqualToSystemSpacingBelow(self.view.safeBottomAnchor, multiplier: 0).isActive = true
+////            containerView.heightAnchor.constraint(equalToConstant: 50).isActive = true
+////            containerView.leftAnchor.constraintEqualToSystemSpacingAfter(self.view.safeLeftAnchor, multiplier: 0).isActive = true
+////            containerView.rightAnchor.constraintEqualToSystemSpacingAfter(self.view.safeRightAnchor, multiplier: 0).isActive = true
+//            containerView.addSubview(chatTextField)
+//            containerView.addSubview(sendButton)
+//            containerView.addConstraintsWithVisualFormat(format: "H:|-2-[v0]-4-[v1(60)]-2-|", views: chatTextField, sendButton)
+//            containerView.addConstraintsWithVisualFormat(format: "V:|[v0]|", views: chatTextField)
+//            containerView.addConstraintsWithVisualFormat(format: "V:|[v0]|", views: sendButton)
+//            containerView.backgroundColor = .gray
+//            return containerView
+//        }
+//    }  
+//
+//    override var canBecomeFirstResponder: Bool{
+//        return true
+//    }
+    
+    
     
     override func viewDidDisappear(_ animated: Bool) {
         //empty the variables here
@@ -135,22 +163,20 @@ class NewMessagesCollectionViewController: UICollectionViewController, UICollect
         guard let chatText = chatTextField.text else {popupModel.createAlert(title: "No message found.", message: "Please type a message.")
             return
         }
-        let date = String(describing: Date())
+//        let date = String(describing: Date())
+        let date = String(describing: Date().timeIntervalSince1970)
 
         let values: [String: Any] = ["sender": uid, "reciever": chosenUserUid, "date": date, "message": chatText]
         let messageRef = Database.database().reference().child("messages").child(randomId)
         let senderMessageRef = Database.database().reference().child("messagesRef").child(uid)
         let recieverMessageRef = Database.database().reference().child("messagesRef").child(chosenUserUid)
-//        let userContactsRef = Database.database().reference().child("contacts").child(uid)
-//        let chosenUserContactRef = Database.database().reference().child("contacts").child(chosenUserUid)
         messageRef.updateChildValues(values) { (error, ref) in
             if error != nil {
                 self.popupModel.createAlert(title: "Message not sent.", message: "Error when sending message")
             }
             senderMessageRef.updateChildValues([randomId:1])
             recieverMessageRef.updateChildValues([randomId:1])
-//            userContactsRef.updateChildValues([chosenUserUid:1])
-//            chosenUserContactRef.updateChildValues([uid:1])
+
             self.chatTextField.text = ""
         }
     }
@@ -172,32 +198,12 @@ class NewMessagesCollectionViewController: UICollectionViewController, UICollect
                 if message.sender == self.chosenUser?.uid || message.sender == uid {
                     if message.reciever == self.chosenUser?.uid || message.reciever == uid {
                         self.messages.append(message)
+                        DispatchQueue.main.async(execute: {
+                            self.collectionView?.reloadData()
+                        })
                     }
                 }
-//                self.timer.invalidate()
-//                self.timer.fire()
-//                self.timer = Timer(timeInterval: 0.2, repeats: false, block: { (timer) in
-                    DispatchQueue.main.async(execute: {
-                        self.collectionView?.reloadData()
-                    })
-//                })
             }, withCancel: nil)
         }, withCancel: nil)
     }
-    
-//    func fetchChosenUser() {
-//        guard let reciever = message.reciever else {return}
-//        let userRef = Database.database().reference().child("user").child(reciever)
-//        userRef.observeSingleEvent(of: .value, with: { (snapshot) in
-//            let dictionary = snapshot.value as! [String: Any]
-//            var user = OptieUser()
-//            user.name = dictionary["name"] as? String
-//            user.imageUrl = dictionary["imageUrl"] as? String
-//            DispatchQueue.main.async(execute: {
-//                self.userNameLabel.text = user.name
-//                self.userImage.loadEventImageUsingCacheWithUrlString(urlString: user.imageUrl!)
-//            })
-//        }, withCancel: nil)
-//    }
-
 }

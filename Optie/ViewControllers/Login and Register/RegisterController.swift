@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import CoreLocation
 
 class RegisterController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate {
     
@@ -36,7 +37,6 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
     let locationTextField: UITextField = {
         let tf = UITextField()
         tf.placeholder = "location"
-        tf.autocapitalizationType = .words
         tf.autocorrectionType = .no
         tf.borderStyle = .roundedRect
         tf.layer.cornerRadius = 4
@@ -147,30 +147,19 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
     
     func saveUserToDB(_ imageUrl: String) {
         guard let name = nameTextField.text, let location = locationTextField.text, let email = emailTextField.text else {return}
+        let latitude = String(describing: convertAddressToCLLocation(location: location).coordinate.latitude)
+        let longitude = String(describing: convertAddressToCLLocation(location: location).coordinate.longitude)
         guard let uid = Auth.auth().currentUser?.uid else {return}
-        let values = ["fbId": "non-fbUser", "name": name, "location": location, "email": email, "imageUrl": imageUrl]
+        let values = ["fbId": "non-fbUser", "name": name, "location": location, "email": email, "imageUrl": imageUrl, "latitude": latitude, "longitude": longitude] 
         let databaseRef = Database.database().reference().child("user").child(uid)
         databaseRef.updateChildValues(values, withCompletionBlock: { (error, reference) in
             if error != nil {
                 print("Failed to input to database", error ?? "unknown error")
                 return
             }
-            
-//            self.user?.fbId = values["fbId"]
-//            self.user?.name = values["name"]
-//            self.user?.email = values["email"]
-//            self.user?.location = values["location"]
-//            self.user?.imageUrl = imageUrl
-//            self.user?.uid = uid
-            
-                let profileController = ProfileController()
-                let navProfileController = UINavigationController(rootViewController: profileController)
-                self.present(navProfileController, animated: true, completion: nil)
-//                self.present(navProfileController, animated: true, completion: {
-//                    guard let user = self.user else {return}
-//                    profileController.user = user
-//                })
-            
+            let profileController = ProfileController()
+            let navProfileController = UINavigationController(rootViewController: profileController)
+            self.present(navProfileController, animated: true, completion: nil)
         })
     }
     
@@ -220,5 +209,20 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
+    }
+    
+    func convertAddressToCLLocation(location: String) -> CLLocation {
+        var coordinates = CLLocation()
+        let geoCoder = CLGeocoder()
+        geoCoder.geocodeAddressString(location, in: nil, preferredLocale: nil) { (placemark, error) in
+            if error != nil {
+                print(error ?? "unknown error")
+            }
+            let placemark = placemark
+            if let unwrappedCoords = placemark?.first?.location {
+                coordinates = unwrappedCoords
+            }
+        }
+        return coordinates
     }
 }

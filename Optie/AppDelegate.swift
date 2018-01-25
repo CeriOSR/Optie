@@ -21,12 +21,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         FirebaseApp.configure()
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.makeKeyAndVisible()
-        
-//        let rootViewController = LoginController()
-//        let layout = UICollectionViewFlowLayout()
-//        let availability = AvailabilityCollectionViewController(collectionViewLayout: layout)
-//        let navAvailability = UINavigationController(rootViewController: availability)
-//        let rootViewController = navAvailability
         let tabBarController = TabBarController()
         let rootViewController = tabBarController
         window?.rootViewController = rootViewController
@@ -35,7 +29,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         navAppearance.tintColor = UIColor(r: 0, g: 122, b: 255)
         return true
     }
-    
+        
     func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
         
         let handled = FBSDKApplicationDelegate.sharedInstance().application(app, open: url, sourceApplication: options[UIApplicationOpenURLOptionsKey.sourceApplication] as! String, annotation: options[UIApplicationOpenURLOptionsKey.annotation])

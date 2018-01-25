@@ -90,7 +90,7 @@ class AvailabilityCell: BaseCell, UICollectionViewDataSource, UICollectionViewDe
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 140, height: frame.height)
+        return CGSize(width: 200, height: frame.height)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
@@ -114,7 +114,7 @@ class DayCell: BaseCell {
     
     let nameLabel: UILabel = {
         let label = UILabel()
-        label.textAlignment = .center
+        label.textAlignment = .left
         label.textColor = .white
         label.numberOfLines = 2
         label.adjustsFontSizeToFitWidth = true
@@ -137,7 +137,7 @@ class DayCell: BaseCell {
         addSubview(userImage)
         
         addConstraintsWithVisualFormat(format: "H:|-10-[v0]-10-|", views: nameLabel)
-        addConstraintsWithVisualFormat(format: "H:|-34-[v0(70)]|", views: userImage)
+        addConstraintsWithVisualFormat(format: "H:|-10-[v0(70)]|", views: userImage)
         addConstraintsWithVisualFormat(format: "V:|-36-[v0(70)]", views: userImage)
         addConstraintsWithVisualFormat(format: "V:[v0(40)]-10-|", views: nameLabel)
     }
@@ -153,18 +153,18 @@ class MessageListCell: BaseCell {
     
     var message = Message() {
         didSet{
-//            guard let reciever = message.reciever else {return}
-//            let userRef = Database.database().reference().child("user").child(reciever)
-//            userRef.observeSingleEvent(of: .value, with: { (snapshot) in
-//                let dictionary = snapshot.value as! [String: Any]
-//                var user = OptieUser()
-//                user.name = dictionary["name"] as? String
-//                user.imageUrl = dictionary["imageUrl"] as? String
-//                DispatchQueue.main.async(execute: {
-//                    self.userNameLabel.text = user.name
-//                    self.userImage.loadEventImageUsingCacheWithUrlString(urlString: user.imageUrl!)
-//                })
-//            }, withCancel: nil)
+            guard let reciever = message.reciever else {return}
+            let userRef = Database.database().reference().child("user").child(reciever)
+            userRef.observeSingleEvent(of: .value, with: { (snapshot) in
+                let dictionary = snapshot.value as! [String: Any]
+                var user = OptieUser()
+                user.name = dictionary["name"] as? String
+                user.imageUrl = dictionary["imageUrl"] as? String
+                DispatchQueue.main.async(execute: {
+                    self.userNameLabel.text = user.name
+                    self.userImage.loadEventImageUsingCacheWithUrlString(urlString: user.imageUrl!)
+                })
+            }, withCancel: nil)
         }
     }
     

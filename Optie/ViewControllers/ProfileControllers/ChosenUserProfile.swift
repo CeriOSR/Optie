@@ -23,7 +23,6 @@ class ChosenUserProfileController: UIViewController {
     var chosenUser: OptieUser? {
         didSet{
             navigationItem.title = chosenUser?.name
-            print(chosenUser?.name)
         }
     }
     

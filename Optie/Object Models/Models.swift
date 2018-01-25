@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Firebase
 
 struct OptieUser {
     var uid: String?
@@ -48,4 +49,27 @@ struct Message {
     var message: String?
     var sender: String?
     var reciever: String?
+    
+    func chatPartnerId() -> String? {
+        return sender == Auth.auth().currentUser?.uid ? reciever : sender
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -40,13 +40,30 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
             navigationItem.title = user?.name
         }
     }
+    
+    let settingsPopupView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .gray /*UIColor(r: 13, g: 31, b: 61)*/
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupViews()
+    }
+    
+    private func setupViews() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "SETTINGS"), style: .plain, target: self, action: #selector(handleSettings))
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogout))
         collectionView?.backgroundColor = self.view.tintColor
         self.collectionView!.register(AvailabilityCell.self, forCellWithReuseIdentifier: reuseIdentifier)
         collectionView?.isScrollEnabled = true
+        view.addSubview(settingsPopupView)
+        settingsPopupView.centerXAnchor.constraintEqualToSystemSpacingAfter(view.centerXAnchor, multiplier: 0).isActive = true
+        settingsPopupView.centerYAnchor.constraintEqualToSystemSpacingBelow(view.centerYAnchor, multiplier: 0).isActive = true
+        settingsPopupView.heightAnchor.constraint(equalToConstant: 500).isActive = true
+        settingsPopupView.widthAnchor.constraint(equalToConstant: 350).isActive = true
         
     }
     
@@ -296,22 +313,9 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
                     print("No available users")
                 }
             }
-//            self.timer.invalidate()
-//            self.timer.fire()
-//            self.timer = Timer(timeInterval: 0.2, repeats: false, block: { (timer) in
-//                DispatchQueue.main.async(execute: {
-//                    self.collectionView?.reloadData()
-//                })
-//            })
-            DispatchQueue.main.async(execute: {
-                self.timer.invalidate()
-                self.timer = Timer(timeInterval: 1, repeats: false, block: { (timer) in
-                    DispatchQueue.main.async {
-                        self.collectionView?.reloadData()
-                    }
-                })
-                self.timer.fire()
-            })
+                DispatchQueue.main.async {
+                    self.collectionView?.reloadData()
+                }
         }, withCancel: nil)
     }
    
@@ -319,6 +323,10 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
         DispatchQueue.main.async {
             self.collectionView?.reloadData()
         }
+    }
+    
+    @objc func handleSettings() {
+        print("settings ")
     }
 }
 
