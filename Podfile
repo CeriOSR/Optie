@@ -16,6 +16,9 @@ pod 'Firebase/Auth'
 pod 'Firebase/Storage'
 pod 'Firebase/Core'
 
+    pod 'Alamofire', '~> 4.5'
+    pod 'PromiseKit', '~> 4.4'
+
   target 'OptieTests' do
     inherit! :search_paths
     # Pods for testing
@@ -28,6 +31,8 @@ pod 'Firebase/Database'
 pod 'Firebase/Auth'
 pod 'Firebase/Storage'
 pod 'Firebase/Core'
+    pod 'Alamofire', '~> 4.5'
+    pod 'PromiseKit', '~> 4.4'
 
   end
 
@@ -43,6 +48,9 @@ pod 'Firebase/Database'
 pod 'Firebase/Auth'
 pod 'Firebase/Storage'
 pod 'Firebase/Core'
+
+    pod 'Alamofire', '~> 4.5'
+    pod 'PromiseKit', '~> 4.4'
 
   end
 

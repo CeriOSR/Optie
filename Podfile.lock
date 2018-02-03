@@ -1,4 +1,5 @@
 PODS:
+  - Alamofire (4.6.0)
   - Bolts (1.8.4):
     - Bolts/AppLinks (= 1.8.4)
     - Bolts/Tasks (= 1.8.4)
@@ -52,8 +53,20 @@ PODS:
     - GoogleToolboxForMac/NSString+URLArguments (= 2.1.1)
   - GoogleToolboxForMac/NSString+URLArguments (2.1.1)
   - GTMSessionFetcher/Core (1.1.10)
+  - PromiseKit (4.5.2):
+    - PromiseKit/Foundation (= 4.5.2)
+    - PromiseKit/QuartzCore (= 4.5.2)
+    - PromiseKit/UIKit (= 4.5.2)
+  - PromiseKit/CorePromise (4.5.2)
+  - PromiseKit/Foundation (4.5.2):
+    - PromiseKit/CorePromise
+  - PromiseKit/QuartzCore (4.5.2):
+    - PromiseKit/CorePromise
+  - PromiseKit/UIKit (4.5.2):
+    - PromiseKit/CorePromise
 
 DEPENDENCIES:
+  - Alamofire (~> 4.5)
   - Bolts
   - FBSDKCoreKit
   - FBSDKLoginKit
@@ -62,8 +75,10 @@ DEPENDENCIES:
   - Firebase/Core
   - Firebase/Database
   - Firebase/Storage
+  - PromiseKit (~> 4.4)
 
 SPEC CHECKSUMS:
+  Alamofire: f41a599bd63041760b26d393ec1069d9d7b917f4
   Bolts: 8a7995239dbe724f9cba2248b766d48b7ebdd322
   FBSDKCoreKit: 9c2daf0162214d6d2e21cf8208a9c6c2a2e42b9c
   FBSDKLoginKit: 00cf28916b9f0169763a3d61985d745b579fe304
@@ -77,7 +92,8 @@ SPEC CHECKSUMS:
   FirebaseStorage: 8110a1ed2034c8fbfd83890d2acc9cdbbd99afec
   GoogleToolboxForMac: 8e329f1b599f2512c6b10676d45736bcc2cbbeb0
   GTMSessionFetcher: 30d874b96d0d76028f61fbd122801e3f030d47db
+  PromiseKit: 743e497a5f505a470d3bbbf4ce0663c1268af0a4
 
-PODFILE CHECKSUM: d9d5780ce66b50b1afd731d3fbc7044499ef6fc1
+PODFILE CHECKSUM: 98ecf3f546eeab6a2adcd8d11ff0927c623aa418
 
-COCOAPODS: 1.2.1
+COCOAPODS: 1.4.0

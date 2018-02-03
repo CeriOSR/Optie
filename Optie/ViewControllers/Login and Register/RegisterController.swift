@@ -9,6 +9,8 @@
 import UIKit
 import Firebase
 import CoreLocation
+import Alamofire
+import PromiseKit
 
 class RegisterController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate {
     
@@ -96,6 +98,9 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
+//        getLatLongForZip(zipCode: "v3x0b6")
+        print(convertAddressToCLLocation(location: "1 Infinite Loop, Cupertino, CA"))
+        forwardGeoCoding()
     }
     
     func setupViews() {
@@ -147,10 +152,11 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
     
     func saveUserToDB(_ imageUrl: String) {
         guard let name = nameTextField.text, let location = locationTextField.text, let email = emailTextField.text else {return}
-        let latitude = String(describing: convertAddressToCLLocation(location: location).coordinate.latitude)
-        let longitude = String(describing: convertAddressToCLLocation(location: location).coordinate.longitude)
+        let latitude = String(describing: convertAddressToCLLocation(location: location).latitude)
+        let longitude = String(describing: convertAddressToCLLocation(location: location).longitude)
+        
         guard let uid = Auth.auth().currentUser?.uid else {return}
-        let values = ["fbId": "non-fbUser", "name": name, "location": location, "email": email, "imageUrl": imageUrl, "latitude": latitude, "longitude": longitude] 
+        let values = ["fbId": "non-fbUser", "name": name, "location": location, "email": email, "imageUrl": imageUrl, "latitude": latitude, "longitude": longitude]
         let databaseRef = Database.database().reference().child("user").child(uid)
         databaseRef.updateChildValues(values, withCompletionBlock: { (error, reference) in
             if error != nil {
@@ -211,18 +217,110 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
         return true
     }
     
-    func convertAddressToCLLocation(location: String) -> CLLocation {
-        var coordinates = CLLocation()
+    func convertAddressToCLLocation(location: String) -> CLLocationCoordinate2D {
+        var coordinates = CLLocationCoordinate2D()
         let geoCoder = CLGeocoder()
-        geoCoder.geocodeAddressString(location, in: nil, preferredLocale: nil) { (placemark, error) in
+        geoCoder.geocodeAddressString(location) { (placemarks, error) in
             if error != nil {
-                print(error ?? "unknown error")
-            }
-            let placemark = placemark
-            if let unwrappedCoords = placemark?.first?.location {
-                coordinates = unwrappedCoords
+                print("GEOCODER: no placemarks found")
+            } else {
+                let placemark = placemarks
+                if let unwrapppedCoords = placemark?.first?.location?.coordinate {
+                    coordinates = unwrapppedCoords
+                }
             }
         }
+        print(coordinates.latitude, coordinates.longitude)
         return coordinates
     }
+    
+    
+    
+    let baseUrl = "https://maps.googleapis.com/maps/api/geocode/json?"
+    let apikey = "AIzaSyAbp6sryjHWNB1o5SIW6ANJFC0EVHV4EiQ"
+//    func getLatLngForZip(zipCode: String) {
+//        let url = NSURL(string: "\(baseUrl)address=\(zipCode)&key=\(apikey)")
+//        let data = try! Data(contentsOf: url! as URL)
+////        let data = NSData(contentsOfURL: url! as URL)
+//        let json = try! JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.allowFragments) as! NSDictionary
+//        if let result = json["results"] as? NSArray {
+//            if let geometry = result[0]["geometry"] as? NSDictionary {
+//                if let location = geometry["location"] as? NSDictionary {
+//                    let latitude = location["lat"] as! Float
+//                    let longitude = location["lng"] as! Float
+//                    print("\n\(latitude), \(longitude)")
+//                }
+//            }
+//        }
+//    }
+    func getLatLongForZip(zipCode: String) {
+        let url = URL(string: "\(baseUrl)address=\(zipCode)&key=\(apikey)")
+        let data = try! Data(contentsOf: url! as URL)
+        let json = try! JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.allowFragments) as! [String: Any]
+        if let result = json["results"] as? [[String: Any]] {
+            if let geometry = result[0]["geometry"] as? [String: Any] {
+                if let location = geometry["location"] as? [String: Any] {
+                    let latitude = location["lat"] as! Float
+                    let longitude = location["lng"] as! Float
+                    print("\n \(latitude), \(longitude)")
+                }
+            }
+        }
+    }
+    
+    func forwardGeoCoding() {
+        let address = "7300 Moffatt Road, Richmond, British Columbia"
+        let geocode = CLGeocoder()
+        geocode.geocodeAddressString(address) { (placemarks, error) in
+            guard let placemarks = placemarks, let error = error else {return }
+            self.processResults(withPlacemarks: placemarks, error: error)
+        }
+    }
+    
+    private func processResults(withPlacemarks: [CLPlacemark], error: Error?){
+        if error != nil {
+            print("Unable to Forward Geocode Address (\(error ?? "unknown error" as! Error)")
+        } else {
+//            let location: CLLocation?
+            if withPlacemarks.count > 0 {
+                guard let location: CLLocation = withPlacemarks.first?.location else {return}
+                let coordinate = location.coordinate
+                print(coordinate.latitude, coordinate.longitude)
+            }
+            
+            
+            
+            
+        }
+        
+    }
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }

@@ -78,12 +78,12 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
     }
     
     override func viewDidAppear(_ animated: Bool) {
-//        do {
-//            try Auth.auth().signOut()
-//        } catch let err {
-//            print(err)
-//        }
-//        checkIfUserIsLoggedIn()
+        do {
+            try Auth.auth().signOut()
+        } catch let err {
+            print(err)
+        }
+        checkIfUserIsLoggedIn()
     }
     
     override func viewWillAppear(_ animated: Bool) {
