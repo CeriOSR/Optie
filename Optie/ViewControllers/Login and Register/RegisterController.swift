@@ -36,15 +36,37 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
         return tf
     }()
     
-    let locationTextField: UITextField = {
+    let addressTextField: UITextField = {
         let tf = UITextField()
-        tf.placeholder = "address, city, state, country"
+        tf.placeholder = "address"
         tf.autocapitalizationType = .words
         tf.autocorrectionType = .no
         tf.borderStyle = .roundedRect
         tf.layer.cornerRadius = 4
         tf.layer.masksToBounds = true
         return tf
+    }()
+    
+    let cityTextField: UITextField = {
+    let tf = UITextField()
+    tf.placeholder = "city"
+    tf.autocapitalizationType = .words
+    tf.autocorrectionType = .no
+    tf.borderStyle = .roundedRect
+    tf.layer.cornerRadius = 4
+    tf.layer.masksToBounds = true
+    return tf
+    }()
+    
+    let provinceTextField: UITextField = {
+    let tf = UITextField()
+    tf.placeholder = "province"
+    tf.autocapitalizationType = .words
+    tf.autocorrectionType = .no
+    tf.borderStyle = .roundedRect
+    tf.layer.cornerRadius = 4
+    tf.layer.masksToBounds = true
+    return tf
     }()
     
     let emailTextField: UITextField = {
@@ -57,6 +79,18 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
         tf.layer.cornerRadius = 4
         tf.layer.masksToBounds = true
         return tf
+    }()
+    
+    let ageTextField: UITextField = {
+    let tf = UITextField()
+        tf.placeholder = "Age: must be less than 100"
+    tf.keyboardType = .numberPad
+    tf.textAlignment = .center
+    tf.autocorrectionType = .no
+    tf.borderStyle = .roundedRect
+    tf.layer.cornerRadius = 4
+    tf.layer.masksToBounds = true
+    return tf
     }()
     
     let passwordTextField : UITextField = {
@@ -121,21 +155,29 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
         
         containerView.addSubview(userImage)
         containerView.addSubview(nameTextField)
-        containerView.addSubview(locationTextField)
+        containerView.addSubview(addressTextField)
+        containerView.addSubview(cityTextField)
+        containerView.addSubview(provinceTextField)
         containerView.addSubview(emailTextField)
         containerView.addSubview(passwordTextField)
         containerView.addSubview(registerButton)
+        containerView.addSubview(ageTextField)
         containerView.addSubview(genderSegmentControl)
+        
 
         containerView.addConstraintsWithVisualFormat(format: "H:|-130-[v0(100)]", views: userImage)
         containerView.addConstraintsWithVisualFormat(format: "H:|-8-[v0]-8-|", views: nameTextField)
-        containerView.addConstraintsWithVisualFormat(format: "H:|-8-[v0]-8-|", views: locationTextField)
+        containerView.addConstraintsWithVisualFormat(format: "H:|-8-[v0]-8-|", views: addressTextField)
         containerView.addConstraintsWithVisualFormat(format: "H:|-8-[v0]-8-|", views: emailTextField)
         containerView.addConstraintsWithVisualFormat(format: "H:|-8-[v0]-8-|", views: passwordTextField)
         containerView.addConstraintsWithVisualFormat(format: "H:|-8-[v0]-8-|", views: registerButton)
+        containerView.addConstraintsWithVisualFormat(format: "H:|-8-[v0]-8-|", views: ageTextField)
         containerView.addConstraintsWithVisualFormat(format: "H:|-8-[v0]-8-|", views: genderSegmentControl)
+        containerView.addConstraintsWithVisualFormat(format: "H:|-8-[v0]-150-|", views: cityTextField)
         
-        containerView.addConstraintsWithVisualFormat(format: "V:|-50-[v0(100)]-46-[v1(40)]-4-[v2(40)]-4-[v3(40)]-4-[v4(40)]-4-[v5(20)]-50-[v6(40)]", views: userImage, nameTextField,locationTextField, emailTextField, passwordTextField, genderSegmentControl, registerButton)
+        
+        containerView.addConstraintsWithVisualFormat(format: "V:|-50-[v0(100)]-30-[v1(30)]-2-[v2(30)]-2-[v3(30)]-2-[v4(30)]-2-[v5(30)]-2-[v6(30)]-2-[v7(30)]-120-[v8(50)]", views: userImage, nameTextField, ageTextField, addressTextField, cityTextField, emailTextField, passwordTextField, genderSegmentControl, registerButton)
+        provinceTextField.anchors(top: addressTextField.bottomAnchor, bottom: emailTextField.topAnchor, left: cityTextField.rightAnchor, right: containerView.rightAnchor, paddingTop: 2, paddingBottom: -2, paddingLeft: 2, paddingRight: -8)
     }
     
     @objc func handleBack() {
@@ -143,7 +185,7 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
     }
     
     @objc func handleRegister() {
-        if nameTextField.text == nil || locationTextField.text == nil || emailTextField.text == nil || passwordTextField.text == nil {
+        if nameTextField.text == nil || addressTextField.text == nil || emailTextField.text == nil || passwordTextField.text == nil {
             self.popupModel.createAlert(title: "One of the fields is empty.", message: "Please fill out all the fields.")
         }
         guard let email = emailTextField.text, let password = passwordTextField.text else {return}
@@ -156,7 +198,7 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
     }
     
     func saveUserToDB(_ imageUrl: String) {
-        guard let name = nameTextField.text, let location = locationTextField.text, let email = emailTextField.text, let gender = genderSegmentControl.titleForSegment(at: genderSegmentControl.selectedSegmentIndex) else {return}
+        guard let name = nameTextField.text, let location = addressTextField.text, let email = emailTextField.text, let gender = genderSegmentControl.titleForSegment(at: genderSegmentControl.selectedSegmentIndex) else {return}
         
         guard let uid = Auth.auth().currentUser?.uid else {return}
         let values = ["fbId": "non-fbUser", "name": name, "location": location, "email": email, "imageUrl": imageUrl, "gender": gender]
