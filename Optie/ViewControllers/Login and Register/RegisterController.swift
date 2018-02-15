@@ -38,7 +38,8 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
     
     let locationTextField: UITextField = {
         let tf = UITextField()
-        tf.placeholder = "location"
+        tf.placeholder = "address, city, state, country"
+        tf.autocapitalizationType = .words
         tf.autocorrectionType = .no
         tf.borderStyle = .roundedRect
         tf.layer.cornerRadius = 4
@@ -95,24 +96,26 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
         return button
     }()
     
+    let genderSegmentControl: UISegmentedControl = {
+        let segCon = UISegmentedControl(items: ["male", "female"])
+        segCon.tintColor = .white
+        segCon.selectedSegmentIndex = 0
+        return segCon
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
-//        getLatLongForZip(zipCode: "v3x0b6")
-        print(convertAddressToCLLocation(location: "1 Infinite Loop, Cupertino, CA"))
-        forwardGeoCoding()
+
     }
     
     func setupViews() {
         view.backgroundColor = self.view.tintColor
         navigationController?.navigationBar.backgroundColor = .clear
-//        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(handleBack))
+
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "BACK").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(handleBack))
         
         view.addSubview(containerView)
-        
-//        view.addConstraintsWithVisualFormat(format: "H:|-10-[v0]-10-|", views: containerView)
-//        view.addConstraintsWithVisualFormat(format: "V:|-100-[v0]-20-|", views: containerView)
 
         containerView.anchors(top: view.safeTopAnchor, bottom: view.safeBottomAnchor, left: view.safeLeftAnchor, right: view.safeRightAnchor, paddingTop: 10, paddingBottom: -10, paddingLeft: 10, paddingRight: -10)
         
@@ -122,6 +125,7 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
         containerView.addSubview(emailTextField)
         containerView.addSubview(passwordTextField)
         containerView.addSubview(registerButton)
+        containerView.addSubview(genderSegmentControl)
 
         containerView.addConstraintsWithVisualFormat(format: "H:|-130-[v0(100)]", views: userImage)
         containerView.addConstraintsWithVisualFormat(format: "H:|-8-[v0]-8-|", views: nameTextField)
@@ -129,8 +133,9 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
         containerView.addConstraintsWithVisualFormat(format: "H:|-8-[v0]-8-|", views: emailTextField)
         containerView.addConstraintsWithVisualFormat(format: "H:|-8-[v0]-8-|", views: passwordTextField)
         containerView.addConstraintsWithVisualFormat(format: "H:|-8-[v0]-8-|", views: registerButton)
+        containerView.addConstraintsWithVisualFormat(format: "H:|-8-[v0]-8-|", views: genderSegmentControl)
         
-        containerView.addConstraintsWithVisualFormat(format: "V:|-100-[v0(100)]-46-[v1(46)]-4-[v2(46)]-4-[v3(46)]-4-[v4(46)]-50-[v5(46)]", views: userImage, nameTextField,locationTextField, emailTextField, passwordTextField, registerButton)
+        containerView.addConstraintsWithVisualFormat(format: "V:|-50-[v0(100)]-46-[v1(40)]-4-[v2(40)]-4-[v3(40)]-4-[v4(40)]-4-[v5(20)]-50-[v6(40)]", views: userImage, nameTextField,locationTextField, emailTextField, passwordTextField, genderSegmentControl, registerButton)
     }
     
     @objc func handleBack() {
@@ -151,18 +156,29 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
     }
     
     func saveUserToDB(_ imageUrl: String) {
-        guard let name = nameTextField.text, let location = locationTextField.text, let email = emailTextField.text else {return}
-        let latitude = String(describing: convertAddressToCLLocation(location: location).latitude)
-        let longitude = String(describing: convertAddressToCLLocation(location: location).longitude)
+        guard let name = nameTextField.text, let location = locationTextField.text, let email = emailTextField.text, let gender = genderSegmentControl.titleForSegment(at: genderSegmentControl.selectedSegmentIndex) else {return}
         
         guard let uid = Auth.auth().currentUser?.uid else {return}
-        let values = ["fbId": "non-fbUser", "name": name, "location": location, "email": email, "imageUrl": imageUrl, "latitude": latitude, "longitude": longitude]
+        let values = ["fbId": "non-fbUser", "name": name, "location": location, "email": email, "imageUrl": imageUrl, "gender": gender]
         let databaseRef = Database.database().reference().child("user").child(uid)
         databaseRef.updateChildValues(values, withCompletionBlock: { (error, reference) in
             if error != nil {
                 print("Failed to input to database", error ?? "unknown error")
                 return
             }
+            var coordinates : CLLocationCoordinate2D?
+            let nativeGeocoding = NativeGeocoding(location)
+            let geocodingResult = GeocodingResult.init(location)
+            nativeGeocoding.geocode().then(execute: { (geocoding) -> Void in
+                geocodingResult.native = geocoding
+                coordinates = geocoding.coordinates
+                if coordinates?.latitude == 0 && coordinates?.longitude == 0 {
+                    self.popupModel.createAlert(title: "Address Not Found.", message: "Please enter a valid address.")
+                } else {
+                    guard let lat = coordinates?.latitude, let long = coordinates?.longitude else {return}
+                    databaseRef.updateChildValues(["latitude": lat, "longitude": long])
+                }
+            })
             let profileController = ProfileController()
             let navProfileController = UINavigationController(rootViewController: profileController)
             self.present(navProfileController, animated: true, completion: nil)
@@ -233,94 +249,7 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
         print(coordinates.latitude, coordinates.longitude)
         return coordinates
     }
-    
-    
-    
-    let baseUrl = "https://maps.googleapis.com/maps/api/geocode/json?"
-    let apikey = "AIzaSyAbp6sryjHWNB1o5SIW6ANJFC0EVHV4EiQ"
-//    func getLatLngForZip(zipCode: String) {
-//        let url = NSURL(string: "\(baseUrl)address=\(zipCode)&key=\(apikey)")
-//        let data = try! Data(contentsOf: url! as URL)
-////        let data = NSData(contentsOfURL: url! as URL)
-//        let json = try! JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.allowFragments) as! NSDictionary
-//        if let result = json["results"] as? NSArray {
-//            if let geometry = result[0]["geometry"] as? NSDictionary {
-//                if let location = geometry["location"] as? NSDictionary {
-//                    let latitude = location["lat"] as! Float
-//                    let longitude = location["lng"] as! Float
-//                    print("\n\(latitude), \(longitude)")
-//                }
-//            }
-//        }
-//    }
-    func getLatLongForZip(zipCode: String) {
-        let url = URL(string: "\(baseUrl)address=\(zipCode)&key=\(apikey)")
-        let data = try! Data(contentsOf: url! as URL)
-        let json = try! JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.allowFragments) as! [String: Any]
-        if let result = json["results"] as? [[String: Any]] {
-            if let geometry = result[0]["geometry"] as? [String: Any] {
-                if let location = geometry["location"] as? [String: Any] {
-                    let latitude = location["lat"] as! Float
-                    let longitude = location["lng"] as! Float
-                    print("\n \(latitude), \(longitude)")
-                }
-            }
-        }
-    }
-    
-    func forwardGeoCoding() {
-        let address = "7300 Moffatt Road, Richmond, British Columbia"
-        let geocode = CLGeocoder()
-        geocode.geocodeAddressString(address) { (placemarks, error) in
-            guard let placemarks = placemarks, let error = error else {return }
-            self.processResults(withPlacemarks: placemarks, error: error)
-        }
-    }
-    
-    private func processResults(withPlacemarks: [CLPlacemark], error: Error?){
-        if error != nil {
-            print("Unable to Forward Geocode Address (\(error ?? "unknown error" as! Error)")
-        } else {
-//            let location: CLLocation?
-            if withPlacemarks.count > 0 {
-                guard let location: CLLocation = withPlacemarks.first?.location else {return}
-                let coordinate = location.coordinate
-                print(coordinate.latitude, coordinate.longitude)
-            }
-            
-            
-            
-            
-        }
-        
-    }
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 }
+
+
+

@@ -208,18 +208,10 @@ class SkillLevelController: UIViewController {
     
     func setupViews() {
         view.backgroundColor = self.view.tintColor
-//        navigationItem.title = "Profile"
-//        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(handleBack))
+
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "BACK").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(handleBack))
         navigationController?.navigationBar.backgroundColor = self.view.tintColor
         view.addSubview(skillContainerView)
-//        let height = view.frame.height - 75
-//        let y = view.frame.height - height
-//
-//        skillContainerView.frame = CGRect(x: 8, y: y, width: view.frame.width - 16, height: height)
-        
-//        view.addConstraintsWithVisualFormat(format: "H:|-10-[v0]-10-|", views: skillContainerView)
-//        view.addConstraintsWithVisualFormat(format: "V:|-90-[v0]-20-|", views: skillContainerView)
 
         skillContainerView.anchors(top: view.safeTopAnchor, bottom: view.safeBottomAnchor, left: view.safeLeftAnchor, right: view.safeRightAnchor, paddingTop: 10, paddingBottom: -10, paddingLeft: 10, paddingRight: -10)
         
@@ -349,14 +341,6 @@ class SkillLevelController: UIViewController {
             if self.availability?.sunday == true {
                 availabilityRef.child("Sunday").updateChildValues([uid:"Sunday"])
             }
-
-            //move on to next window
-//            let layout = UICollectionViewFlowLayout()
-//            let availabilityCollectionView = AvailabilityCollectionViewController(collectionViewLayout: layout)
-//            let navAvailabilityCollectionView = UINavigationController(rootViewController: availabilityCollectionView)
-//            self.present(navAvailabilityCollectionView, animated: true, completion: {
-//                print("Success")
-//            })
             let tabBarController = TabBarController()
             self.present(tabBarController, animated: true, completion: {
                 print("Success")

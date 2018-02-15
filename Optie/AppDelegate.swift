@@ -15,14 +15,15 @@ import Firebase
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
+    var settingValues = SettingsValues()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         FirebaseApp.configure()
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.makeKeyAndVisible()
         let tabBarController = TabBarController()
-        let rootViewController = tabBarController
+        let navTabBarController = UINavigationController(rootViewController: tabBarController)
+        let rootViewController = navTabBarController
         window?.rootViewController = rootViewController
         FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
         let navAppearance = UINavigationBar.appearance()

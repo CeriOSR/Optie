@@ -16,6 +16,9 @@ struct OptieUser {
     var fbId: String?
     var location: String?
     var imageUrl: String?
+    var latitude: Double?
+    var longitude: Double?
+    var gender: String?
 }
 
 struct SkillLevelModel {
@@ -54,6 +57,21 @@ struct Message {
         return sender == Auth.auth().currentUser?.uid ? reciever : sender
     }
 }
+
+struct SettingsValues {
+    var skillValue: Int?
+    var ageValue: Int?
+    var distance: Double?
+    var gender: String?
+    var bio: String?
+}
+
+//class UserSettings {  //singleton for the settings...lets work on this!
+//    var sharedInstance = SettingsValues()
+//    init(sharedInstance: SettingsValues) {
+//        self.sharedInstance = sharedInstance
+//    }
+//}
 
 
 

@@ -19,7 +19,6 @@ class SportsController: UIViewController {
     }
     var availability = AvailabilityModel()
     
-    
     let sportsContainerView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 6
@@ -246,16 +245,9 @@ class SportsController: UIViewController {
     
     func setupViews() {
         view.backgroundColor = self.view.tintColor
-//        navigationItem.title = "Profile"
         navigationController?.navigationBar.backgroundColor = self.view.tintColor
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(handleBack))
         view.addSubview(sportsContainerView)
-//        let height = view.frame.height - 75
-//        let y = view.frame.height - height
-//        sportsContainerView.frame = CGRect(x: 8, y: y, width: view.frame.width - 16, height: height)
-
-//        view.addConstraintsWithVisualFormat(format: "H:|-10-[v0]-10-|", views: sportsContainerView)
-//        view.addConstraintsWithVisualFormat(format: "V:|-100-[v0]-20-|", views: sportsContainerView)
 
         sportsContainerView.anchors(top: view.safeTopAnchor, bottom: view.safeBottomAnchor, left: view.safeLeftAnchor, right: view.safeRightAnchor, paddingTop: 10, paddingBottom: -10, paddingLeft: 10, paddingRight: -10)
         
@@ -313,23 +305,4 @@ class SportsController: UIViewController {
         sportsContainerView.addConstraintsWithVisualFormat(format: "V:|-440-[v0]", views: sundaySwitch)
         sportsContainerView.addConstraintsWithVisualFormat(format: "V:[v0(45)]-10-|", views: proceedButton)
     }
-    
-//    @objc func saveToDatabase() {
-//        guard let uid = Auth.auth().currentUser?.uid else {return}
-//        availability.userType = sportsSegmentControl.titleForSegment(at: sportsSegmentControl.selectedSegmentIndex)
-//        if carSegmentControl.selectedSegmentIndex == 0 {
-//            availability.haveCar = true
-//        }
-//        let values = ["userType": availability.userType!, "hasCar": availability.haveCar!] as [String : Any]
-//        let dataRef = Database.database().reference().child("SportsAndAvailability").child(uid)
-//        dataRef.updateChildValues(values) { (error, ref) in
-//            if error != nil {
-//                print("FAILED TO SAVE TO DATABASE", error ?? "unknown error")
-//            } else {
-//                let skillLevelController = SkillLevelController()
-//                let navSkillLevelController = UINavigationController(rootViewController: skillLevelController)
-//                self.present(navSkillLevelController, animated: true, completion: nil)
-//            }
-//        }
-//    }
 }

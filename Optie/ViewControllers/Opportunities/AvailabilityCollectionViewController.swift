@@ -9,24 +9,13 @@
 import UIKit
 import FBSDKLoginKit
 import Firebase
-import MapKit
-import CoreLocation
 
 private let reuseIdentifier = "Cell"
 
-class AvailabilityCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, CLLocationManagerDelegate {
+class AvailabilityCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     
-    //put these freaking variables in a struct rey! dont be a moron!
-    var settingsValues = SettingsValues() {
-        didSet{
-            print("AVAILABLE!!!!**************",self.settingsValues)
-        }
-    }
-    var locationManager = CLLocationManager()
-    var chosenRange: Double = 100000.0
     var timer = Timer()
     var days: [String]?
-    var currentUserLocation = CLLocation()
     var monday = [OptieUser]()
     var sunday = [OptieUser]()
     var saturday = [OptieUser]()
@@ -62,21 +51,23 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
-        locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        locationManager.requestWhenInUseAuthorization()
-        locationManager.startUpdatingLocation()
     }
     
     private func setupViews() {
-        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "SETTINGS"), style: .plain, target: self, action: #selector(handleSettings))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogout))
         collectionView?.backgroundColor = self.view.tintColor
         self.collectionView!.register(AvailabilityCell.self, forCellWithReuseIdentifier: reuseIdentifier)
         collectionView?.isScrollEnabled = true
+        view.addSubview(settingsPopupView)
+        settingsPopupView.centerXAnchor.constraintEqualToSystemSpacingAfter(view.centerXAnchor, multiplier: 0).isActive = true
+        settingsPopupView.centerYAnchor.constraintEqualToSystemSpacingBelow(view.centerYAnchor, multiplier: 0).isActive = true
+        settingsPopupView.heightAnchor.constraint(equalToConstant: 500).isActive = true
+        settingsPopupView.widthAnchor.constraint(equalToConstant: 350).isActive = true
+        
     }
     
     override func viewDidDisappear(_ animated: Bool) {
-
         self.monday.removeAll()
         self.tuesday.removeAll()
         self.wednesday.removeAll()
@@ -84,20 +75,15 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
         self.friday.removeAll()
         self.saturday.removeAll()
         self.sunday.removeAll()
-        locationManager.stopUpdatingLocation()
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        let tabBarController = TabBarController()
-        self.settingsValues = tabBarController.settingsValues
-        print("AVAILABLECONTROLLER!!!!!!!!!!!!!!!!!******************",self.settingsValues)
-
-//        do {
-//            try Auth.auth().signOut()
-//        } catch let err {
-//            print(err)
-//        }
-//        checkIfUserIsLoggedIn()
+        do {
+            try Auth.auth().signOut()
+        } catch let err {
+            print(err)
+        }
+        checkIfUserIsLoggedIn()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -159,6 +145,19 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
         navigationController?.pushViewController(chosenProfileController, animated: true)
     }
     
+    @objc func handleLogout() {
+        do {
+            try Auth.auth().signOut()
+            let loginManager = FBSDKLoginManager()
+            loginManager.logOut()
+            let loginController = LoginController()
+            self.present(loginController, animated: true, completion: nil)
+        } catch let err {
+            print("Could not log out", err)
+            return
+        }
+    }
+    
     func checkIfUserIsLoggedIn() {
         if let uid = Auth.auth().currentUser?.uid {
             fetchUser(uid)
@@ -176,11 +175,6 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
         }
     }
     
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        currentUserLocation = locations[0]
-    }
-    
-    
     func fetchUser(_ uid: String){
         guard let uid = Auth.auth().currentUser?.uid else {return}
         let userRef = Database.database().reference().child("user").child(uid)
@@ -193,13 +187,8 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
             user.fbId = dictionary["fbId"] as? String
             user.location = dictionary["location"] as? String
             user.imageUrl = dictionary["imageUrl"] as? String
-            user.latitude = dictionary["latitude"] as? Double
-            user.longitude = dictionary["longitude"] as? Double
-            user.gender = dictionary["gender"] as? String
-//            guard let lat = user.latitude as NSString? else {return}
-//            guard let long = user.longitude as NSString? else {return}
-//            self.currentUserLocation = CLLocation(latitude: lat.doubleValue, longitude: long.doubleValue)
             self.user = user
+            
             self.fetchUserProfile(uid)
         }, withCancel: nil)
     }
@@ -268,6 +257,7 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
             let key = snap.key
             let valueDay = snap.value as! String
             self.fetchSingleUser(key, valueDay: valueDay)
+            
         }, withCancel: nil)
     }
     
@@ -282,70 +272,61 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
             user.fbId = dictionary["fbId"] as? String
             user.location = dictionary["location"] as? String
             user.imageUrl = dictionary["imageUrl"] as? String
-            user.latitude = dictionary["latitude"] as? Double
-            user.longitude = dictionary["longitude"] as? Double
-            user.gender = dictionary["gender"] as? String
-            guard let lat = user.latitude, let long = user.longitude else {return}
-            let userLoc = CLLocation(latitude: lat, longitude: long)
-            switch self.settingsValues.distance {
-            case 100.0? :
-                self.chosenRange = 100000
-            case 50.0? :
-                self.chosenRange = 50000
-            case 25.0? :
-                self.chosenRange = 25000
-            default:
-                self.chosenRange = 100000
-            }
-            let distance = self.currentUserLocation.distance(from: userLoc)
-            if distance < self.chosenRange {
-                if user.uid != Auth.auth().currentUser?.uid {
-                    switch valueDay {
-                    case "Monday":
-                        self.monday.append(user)
-                        self.mondayUsers.day = "Monday"
-                        self.mondayUsers.users = self.monday
-                        self.availableUsersArray.append(self.mondayUsers)
-                    case "Tuesday":
-                        self.tuesday.append(user)
-                        self.tuesdayUsers.day = "Tuesday"
-                        self.tuesdayUsers.users = self.tuesday
-                        self.availableUsersArray.append(self.tuesdayUsers)
-                    case "Wednesday":
-                        self.wednesday.append(user)
-                        self.wednesdayUsers.day = "Wednesday"
-                        self.wednesdayUsers.users = self.wednesday
-                        self.availableUsersArray.append(self.wednesdayUsers)
-                    case "Thursday":
-                        self.thursday.append(user)
-                        self.thursdayUsers.day = "Thursday"
-                        self.thursdayUsers.users = self.thursday
-                        self.availableUsersArray.append(self.thursdayUsers)
-                    case "Friday":
-                        self.friday.append(user)
-                        self.fridayUsers.day = "Friday"
-                        self.fridayUsers.users = self.friday
-                        self.availableUsersArray.append(self.fridayUsers)
-                    case "Saturday":
-                        self.saturday.append(user)
-                        self.saturdayUsers.day = "Saturday"
-                        self.saturdayUsers.users = self.saturday
-                        self.availableUsersArray.append(self.saturdayUsers)
-                    case "Sunday":
-                        self.sunday.append(user)
-                        self.sundayUsers.day = "Sunday"
-                        self.sundayUsers.users = self.sunday
-                        self.availableUsersArray.append(self.sundayUsers)
-                    default:
-                        //handle no users here
-                        print("no users available")
-                    }
+            if user.uid != Auth.auth().currentUser?.uid {
+                switch valueDay {
+                case "Monday":
+                    self.monday.append(user)
+                    self.mondayUsers.day = "Monday"
+                    self.mondayUsers.users = self.monday
+                    self.availableUsersArray.append(self.mondayUsers)
+                case "Tuesday":
+                    self.tuesday.append(user)
+                    self.tuesdayUsers.day = "Tuesday"
+                    self.tuesdayUsers.users = self.tuesday
+                    self.availableUsersArray.append(self.tuesdayUsers)
+                case "Wednesday":
+                    self.wednesday.append(user)
+                    self.wednesdayUsers.day = "Wednesday"
+                    self.wednesdayUsers.users = self.wednesday
+                    self.availableUsersArray.append(self.wednesdayUsers)
+                case "Thursday":
+                    self.thursday.append(user)
+                    self.thursdayUsers.day = "Thursday"
+                    self.thursdayUsers.users = self.thursday
+                    self.availableUsersArray.append(self.thursdayUsers)
+                case "Friday":
+                    self.friday.append(user)
+                    self.fridayUsers.day = "Friday"
+                    self.fridayUsers.users = self.friday
+                    self.availableUsersArray.append(self.fridayUsers)
+                case "Saturday":
+                    self.saturday.append(user)
+                    self.saturdayUsers.day = "Saturday"
+                    self.saturdayUsers.users = self.saturday
+                    self.availableUsersArray.append(self.saturdayUsers)
+                case "Sunday":
+                    self.sunday.append(user)
+                    self.sundayUsers.day = "Sunday"
+                    self.sundayUsers.users = self.sunday
+                    self.availableUsersArray.append(self.sundayUsers)
+                default:
+                    print("No available users")
                 }
             }
-            DispatchQueue.main.async {
-                self.collectionView?.reloadData()
-            }
+                DispatchQueue.main.async {
+                    self.collectionView?.reloadData()
+                }
         }, withCancel: nil)
+    }
+   
+    @objc func reloadCollectionView() {
+        DispatchQueue.main.async {
+            self.collectionView?.reloadData()
+        }
+    }
+    
+    @objc func handleSettings() {
+        print("settings ")
     }
 }
 

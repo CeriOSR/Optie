@@ -9,12 +9,15 @@
 import UIKit
 import FBSDKLoginKit
 import Firebase
+import CoreLocation
+import MapKit
+import PromiseKit
+import Alamofire
 
 class LoginController: UIViewController, FBSDKLoginButtonDelegate, UITextFieldDelegate {
     
     var user = OptieUser()
-//    var fbMember = FbUser()
-    let popUpViewModel = PopupViewModel()
+    let popupModel = PopupViewModel()
     
     let containerView : UIView = {
         let view = UIView()
@@ -83,7 +86,7 @@ class LoginController: UIViewController, FBSDKLoginButtonDelegate, UITextFieldDe
     lazy var fBLoginButton: FBSDKLoginButton = {
         let button = FBSDKLoginButton()
         button.delegate = self
-        button.readPermissions = ["email", "public_profile"]
+        button.readPermissions = ["email", "public_profile", "user_friends", "user_location"]
         return button
     }()
     
@@ -97,32 +100,21 @@ class LoginController: UIViewController, FBSDKLoginButtonDelegate, UITextFieldDe
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        do {
+            try Auth.auth().signOut()
+        } catch let err {
+            print(err)
+        }
         setupViews()
     }
 
-    func setupViews() {
+    private func setupViews() {
         
         view.backgroundColor = self.view.tintColor
         view.addSubview(containerView)
         
         view.addConstraintsWithVisualFormat(format: "H:|-10-[v0]-10-|", views: containerView)
         view.addConstraintsWithVisualFormat(format: "V:|-100-[v0]-20-|", views: containerView)
-
-//        if #available(iOS 11, *) {
-//            let guide = view.safeAreaLayoutGuide
-//            NSLayoutConstraint.activate([
-//                containerView.topAnchor.constraint(equalTo: guide.topAnchor)
-//                ])
-//        } else {
-//            NSLayoutConstraint.activate([
-//                containerView.topAnchor.constraint(equalTo: self.topLayoutGuide.bottomAnchor)
-//                ])
-//        }
-//        NSLayoutConstraint.activate([
-////            containerView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-////            containerView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
-//            containerView.heightAnchor.constraint(equalToConstant: 65)
-//            ])
         
         containerView.anchors(top: view.safeTopAnchor, bottom: view.safeBottomAnchor, left: view.safeLeftAnchor, right: view.safeRightAnchor, paddingTop: 10, paddingBottom: -10, paddingLeft: 10, paddingRight: -10)
         
@@ -162,7 +154,7 @@ class LoginController: UIViewController, FBSDKLoginButtonDelegate, UITextFieldDe
         print("did logout of facebook!!!")
     }
     
-    func loginUserToFirebase() {
+    private func loginUserToFirebase() {
         guard let accessToken = FBSDKAccessToken.current() else {return}
         guard let tokenString = accessToken.tokenString else {return}
         let credential = FacebookAuthProvider.credential(withAccessToken: tokenString)
@@ -174,10 +166,11 @@ class LoginController: UIViewController, FBSDKLoginButtonDelegate, UITextFieldDe
         }
     }
     
-    func fbGraphrequest() {
-        FBSDKGraphRequest(graphPath: "/me", parameters: ["fields": "id, name, email, picture.type(normal)"]).start { (connection, result, error) in
+    private func fbGraphrequest() {
+        FBSDKGraphRequest(graphPath: "/me", parameters: ["fields": "id, name, email, picture.type(normal), location{location}, birthday, gender, relationship_status"]).start { (connection, result, error) in
             if  error != nil {
                 print("Failed graphRequest", error!)
+                //ALERT ASKING FOR PUBLIC PROFILE SOMEWHERE AROUND HERE IF PROFILE IS NOT PUBLIC IE. COORDINATES.
                 return
             }
             let fbUser = result as! [String: Any]
@@ -186,20 +179,39 @@ class LoginController: UIViewController, FBSDKLoginButtonDelegate, UITextFieldDe
             self.user.email = fbUser["email"] as? String
             self.user.fbId = fbUser["id"] as? String
             self.user.name = fbUser["name"] as? String
-            self.user.location = "Location to be determined"
-            print(imageURL)
-            let user = ["email": self.user.email, "fbid": self.user.fbId, "name": self.user.name, "location": self.user.location, "imageUrl": self.user.imageUrl]
+            self.user.gender = fbUser["gender"] as? String
+            let coordinates = fbUser["location"] as! [String: Any]
+            let loc = coordinates["location"] as! [String: Any]
+            self.user.latitude = loc["latitude"] as? Double
+            self.user.longitude = loc["longitude"] as? Double
+            self.user.location = "\(String(describing: loc["city"]))" + " " + "\(String(describing: loc["state"]))" + " " + "\(String(describing: loc["country"]))"
+            let user = ["email": self.user.email, "fbid": self.user.fbId, "name": self.user.name, "gender": self.user.gender, "location": self.user.location, "imageUrl": self.user.imageUrl]
             self.saveUserToDatabase(user: user as! [String : String])
         }
     }
     
-    func saveUserToDatabase(user: [String: String]) {
+    private func saveUserToDatabase(user: [String: String]) {
         guard let uid = Auth.auth().currentUser?.uid else {return}
         let databaseRef = Database.database().reference().child("user").child(uid)
         databaseRef.updateChildValues(user) { (error, reference) in
             if error != nil {
                 print("Could not save user to firebase", error!)
             }
+            guard let location = self.user.location else {return}
+            var coordinates = CLLocationCoordinate2D()
+            let nativeGeocoding = NativeGeocoding(location)
+            let geocodingResult = GeocodingResult.init(location)
+            nativeGeocoding.geocode().then(execute: { (geocoding) -> Void in
+                geocodingResult.native = geocoding
+                coordinates = geocoding.coordinates
+                if coordinates.latitude == 0 && coordinates.longitude == 0 {
+                    self.popupModel.createAlert(title: "Address Not Found.", message: "Please enter a valid address.")
+                } else {
+                    let lat = coordinates.latitude
+                    let long = coordinates.longitude
+                    databaseRef.updateChildValues(["latitude": lat, "longitude": long])
+                }
+            })
             self.checkIfUserProfileExist(uid: uid)
         }
     }
@@ -209,7 +221,7 @@ class LoginController: UIViewController, FBSDKLoginButtonDelegate, UITextFieldDe
         guard let password = passwordTextField.text else {return}
         Auth.auth().signIn(withEmail: email, password: password) { (user, error) in
             if error != nil {
-                self.popUpViewModel.createAlert(title: "Invalid email or password", message: "Email and password does not match")
+                self.popupModel.createAlert(title: "Invalid email or password", message: "Email and password does not match")
                 return
             }
             guard let uid = Auth.auth().currentUser?.uid else {return}
@@ -237,33 +249,15 @@ class LoginController: UIViewController, FBSDKLoginButtonDelegate, UITextFieldDe
         profileRef.observeSingleEvent(of: .value, with: { (snapshot) in
             let dictionary = snapshot.value as? [String: AnyObject]
             if dictionary != nil {
-//                let layout = UICollectionViewFlowLayout()
-//                let availabilityCollectionView = AvailabilityCollectionViewController(collectionViewLayout: layout)
-//                let navAvailabilityCollectionView = UINavigationController(rootViewController: availabilityCollectionView)
-//                self.present(navAvailabilityCollectionView, animated: true, completion: nil)
-                //possibly fetch profile info and pass data to collectionView
                 let tabBarController = TabBarController()
                 self.present(tabBarController, animated: true, completion: {
-                    print("Success")
                 })
             } else {
                 let profileController = ProfileController()
                 let navProfileController = UINavigationController(rootViewController: profileController)
                 self.present(navProfileController, animated: true, completion: nil)
-
             }
         }, withCancel: nil)
     }
-
-
-    
-//    func handleTypeOfUser() {
-//        if let providerId = Auth.auth().currentUser?.providerID {
-//            if providerId == "facebook.com" {
-//
-//            }
-//        }
-//    }
-    
 }
 

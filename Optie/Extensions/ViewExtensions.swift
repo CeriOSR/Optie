@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreLocation
 
 extension UIView {
     
@@ -54,11 +55,11 @@ extension UIView {
         }
     }
     
-    func pinToEdges(view: UIView) {
-        self.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        self.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        self.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        self.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+    func pinToEdges(view: UIView, constant: CGFloat) {
+        self.topAnchor.constraint(equalTo: view.topAnchor, constant: constant).isActive = true
+        self.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: constant).isActive = true
+        self.leftAnchor.constraint(equalTo: view.leftAnchor, constant: constant).isActive = true
+        self.rightAnchor.constraint(equalTo: view.rightAnchor, constant: constant).isActive = true
     }
     
     func addConstraintsWithVisualFormat(format: String, views: UIView...) {
@@ -105,6 +106,15 @@ extension UIImageView {
 extension UIColor {
     convenience init(r: CGFloat, g: CGFloat, b: CGFloat) {
         self.init(red: r/255, green: g/255, blue: b/255, alpha: 1)
+    }
+}
+
+extension CLLocation {
+    
+    func distanceFinder(_ from: CLLocationCoordinate2D, to: CLLocationCoordinate2D) -> Double {
+        let from = CLLocation(latitude: from.latitude, longitude: from.longitude)
+        let to = CLLocation(latitude: to.latitude, longitude: to.longitude)
+        return to.distance(from: from)
     }
 }
 

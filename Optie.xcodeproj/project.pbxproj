@@ -41,6 +41,9 @@
 		E07BAC6F1FB83940008C1A52 /* SkillLevelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E07BAC6E1FB83940008C1A52 /* SkillLevelView.swift */; };
 		E07BAC701FB83940008C1A52 /* SkillLevelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E07BAC6E1FB83940008C1A52 /* SkillLevelView.swift */; };
 		E07BAC711FB83940008C1A52 /* SkillLevelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E07BAC6E1FB83940008C1A52 /* SkillLevelView.swift */; };
+		E0920C4F202F9FAC00BDDD5E /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0920C4E202F9FAC00BDDD5E /* SettingsViewController.swift */; };
+		E0920C50202F9FAC00BDDD5E /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0920C4E202F9FAC00BDDD5E /* SettingsViewController.swift */; };
+		E0920C51202F9FAC00BDDD5E /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0920C4E202F9FAC00BDDD5E /* SettingsViewController.swift */; };
 		E0961FED1FAF8CAF007B5970 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0961FEC1FAF8CAF007B5970 /* AppDelegate.swift */; };
 		E0961FEF1FAF8CAF007B5970 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0961FEE1FAF8CAF007B5970 /* ViewController.swift */; };
 		E0961FF21FAF8CAF007B5970 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E0961FF01FAF8CAF007B5970 /* Main.storyboard */; };
@@ -58,6 +61,9 @@
 		E0D7A4031FFEF9DA009550B9 /* NewMessagesCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0D7A4021FFEF9DA009550B9 /* NewMessagesCollectionViewController.swift */; };
 		E0D7A4041FFEF9DA009550B9 /* NewMessagesCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0D7A4021FFEF9DA009550B9 /* NewMessagesCollectionViewController.swift */; };
 		E0D7A4051FFEF9DA009550B9 /* NewMessagesCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0D7A4021FFEF9DA009550B9 /* NewMessagesCollectionViewController.swift */; };
+		E0EAD57E20278059009B5542 /* Geocoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0EAD57D20278059009B5542 /* Geocoder.swift */; };
+		E0EAD57F20278059009B5542 /* Geocoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0EAD57D20278059009B5542 /* Geocoder.swift */; };
+		E0EAD58020278059009B5542 /* Geocoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0EAD57D20278059009B5542 /* Geocoder.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -97,6 +103,7 @@
 		E07BAC661FB838FA008C1A52 /* ProfileController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileController.swift; sourceTree = "<group>"; };
 		E07BAC6A1FB83920008C1A52 /* SportsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SportsController.swift; sourceTree = "<group>"; };
 		E07BAC6E1FB83940008C1A52 /* SkillLevelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillLevelView.swift; sourceTree = "<group>"; };
+		E0920C4E202F9FAC00BDDD5E /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		E0961FE91FAF8CAF007B5970 /* Optie.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Optie.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E0961FEC1FAF8CAF007B5970 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E0961FEE1FAF8CAF007B5970 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -114,6 +121,7 @@
 		E096201D1FAF922E007B5970 /* ViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewExtensions.swift; sourceTree = "<group>"; };
 		E0A384ED1FB61195004BC9D2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		E0D7A4021FFEF9DA009550B9 /* NewMessagesCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewMessagesCollectionViewController.swift; sourceTree = "<group>"; };
+		E0EAD57D20278059009B5542 /* Geocoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Geocoder.swift; sourceTree = "<group>"; };
 		E0F2DD341FB1397500A4CD12 /* Optie.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Optie.entitlements; sourceTree = "<group>"; };
 		FB6AD7712B05ACD178E1630E /* Pods_OptieUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OptieUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -173,8 +181,10 @@
 			isa = PBXGroup;
 			children = (
 				E00690871FE6F70100C4E94A /* AvailabilityCollectionViewController.swift */,
+				E0920C4E202F9FAC00BDDD5E /* SettingsViewController.swift */,
 			);
-			path = Opportunities;
+			name = Opportunities;
+			path = ../Opportunities;
 			sourceTree = "<group>";
 		};
 		E006908B1FE6F8AD00C4E94A /* CollectionViewCells */ = {
@@ -197,15 +207,9 @@
 			children = (
 				E06E96311FB7F25600F13C0D /* Models.swift */,
 				E05F36431FB8FC3F001898CE /* PopupsModel.swift */,
+				E0EAD57D20278059009B5542 /* Geocoder.swift */,
 			);
 			path = "Object Models";
-			sourceTree = "<group>";
-		};
-		E07352FC1FFD448500BF77D4 /* UserProfileController */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = UserProfileController;
 			sourceTree = "<group>";
 		};
 		E07352FD1FFD456700BF77D4 /* TabController */ = {
@@ -272,7 +276,6 @@
 			children = (
 				E062A35A2013AA3B00B76BCA /* View */,
 				E006908B1FE6F8AD00C4E94A /* CollectionViewCells */,
-				E00690861FE6F6A100C4E94A /* Opportunities */,
 				E06E962E1FB7F1CC00F13C0D /* Object Models */,
 				E09620221FAF9350007B5970 /* Extensions */,
 				E09620211FAF9345007B5970 /* ViewControllers */,
@@ -309,9 +312,9 @@
 		E09620211FAF9345007B5970 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				E00690861FE6F6A100C4E94A /* Opportunities */,
 				E07353021FFD494E00BF77D4 /* ChatControllers */,
 				E07352FD1FFD456700BF77D4 /* TabController */,
-				E07352FC1FFD448500BF77D4 /* UserProfileController */,
 				E07BAC651FB838BA008C1A52 /* Login and Register */,
 				E07BAC641FB83872008C1A52 /* ProfileControllers */,
 			);
@@ -506,6 +509,8 @@
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
 				"${BUILT_PRODUCTS_DIR}/PromiseKit/PromiseKit.framework",
+				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
+				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
@@ -517,6 +522,8 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PromiseKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -556,6 +563,8 @@
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
 				"${BUILT_PRODUCTS_DIR}/PromiseKit/PromiseKit.framework",
+				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
+				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
@@ -567,6 +576,8 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PromiseKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -651,6 +662,8 @@
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
 				"${BUILT_PRODUCTS_DIR}/PromiseKit/PromiseKit.framework",
+				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
+				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
@@ -662,6 +675,8 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PromiseKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -688,9 +703,11 @@
 				E07BAC6F1FB83940008C1A52 /* SkillLevelView.swift in Sources */,
 				E096201E1FAF922E007B5970 /* ViewExtensions.swift in Sources */,
 				E0961FF51FAF8CAF007B5970 /* Optie.xcdatamodeld in Sources */,
+				E0EAD57E20278059009B5542 /* Geocoder.swift in Sources */,
 				E06E96321FB7F25600F13C0D /* Models.swift in Sources */,
 				E00690881FE6F70100C4E94A /* AvailabilityCollectionViewController.swift in Sources */,
 				E006908D1FE6F8C900C4E94A /* CollectionViewCells.swift in Sources */,
+				E0920C4F202F9FAC00BDDD5E /* SettingsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -699,12 +716,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				E006908E1FE6F8C900C4E94A /* CollectionViewCells.swift in Sources */,
+				E0EAD57F20278059009B5542 /* Geocoder.swift in Sources */,
 				E06E96331FB7F25600F13C0D /* Models.swift in Sources */,
 				E04753EA20069605004EEFBB /* ChosenUserProfile.swift in Sources */,
 				E07BAC6C1FB83920008C1A52 /* SportsController.swift in Sources */,
 				E0D7A4041FFEF9DA009550B9 /* NewMessagesCollectionViewController.swift in Sources */,
 				E07BAC701FB83940008C1A52 /* SkillLevelView.swift in Sources */,
 				E07353001FFD45C900BF77D4 /* TabBarController.swift in Sources */,
+				E0920C50202F9FAC00BDDD5E /* SettingsViewController.swift in Sources */,
 				E096201F1FAF922E007B5970 /* ViewExtensions.swift in Sources */,
 				E09620051FAF8CAF007B5970 /* OptieTests.swift in Sources */,
 				E05F36451FB8FC3F001898CE /* PopupsModel.swift in Sources */,
@@ -719,12 +738,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				E006908F1FE6F8C900C4E94A /* CollectionViewCells.swift in Sources */,
+				E0EAD58020278059009B5542 /* Geocoder.swift in Sources */,
 				E06E96341FB7F25600F13C0D /* Models.swift in Sources */,
 				E04753EB20069605004EEFBB /* ChosenUserProfile.swift in Sources */,
 				E07BAC6D1FB83920008C1A52 /* SportsController.swift in Sources */,
 				E0D7A4051FFEF9DA009550B9 /* NewMessagesCollectionViewController.swift in Sources */,
 				E07BAC711FB83940008C1A52 /* SkillLevelView.swift in Sources */,
 				E07353011FFD45C900BF77D4 /* TabBarController.swift in Sources */,
+				E0920C51202F9FAC00BDDD5E /* SettingsViewController.swift in Sources */,
 				E09620201FAF922E007B5970 /* ViewExtensions.swift in Sources */,
 				E09620101FAF8CAF007B5970 /* OptieUITests.swift in Sources */,
 				E05F36461FB8FC3F001898CE /* PopupsModel.swift in Sources */,
