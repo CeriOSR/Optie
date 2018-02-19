@@ -128,8 +128,8 @@ class ProfileController: UIViewController {
     
     @objc func presentSportsController() {
         let sportsController = SportsController()
-        let navSportsController = UINavigationController(rootViewController: sportsController)
-        self.present(navSportsController, animated: true) {
+//        let navSportsController = UINavigationController(rootViewController: sportsController)
+        self.present(sportsController, animated: true) {
             sportsController.user = self.user
         }
     }
@@ -144,8 +144,14 @@ class ProfileController: UIViewController {
             user.name = dictionary["name"] as? String
             user.email = dictionary["email"] as? String
             user.fbId = dictionary["fbId"] as? String
-            user.location = dictionary["location"] as? String
             user.imageUrl = dictionary["imageUrl"] as? String
+            user.latitude = dictionary["latitude"] as? Double
+            user.longitude = dictionary["longitude"] as? Double
+            user.gender = dictionary["gender"] as? String
+            user.age = dictionary["age"] as? String
+            user.address = dictionary["address"] as? String
+            user.city = dictionary["city"] as? String
+            user.province = dictionary["province"] as? String
             
             self.user = user
             DispatchQueue.main.async(execute: {

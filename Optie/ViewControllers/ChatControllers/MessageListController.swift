@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import FBSDKLoginKit
 
 private let reuseIdentifier = "Cell"
 
@@ -23,6 +24,7 @@ class MessageListController: UICollectionViewController, UICollectionViewDelegat
         self.collectionView!.register(MessageListCell.self, forCellWithReuseIdentifier: reuseIdentifier)
     }
     override func viewDidAppear(_ animated: Bool) {
+        setupViews()
         fetchMessages()
     }
 
@@ -68,8 +70,14 @@ class MessageListController: UICollectionViewController, UICollectionViewDelegat
             chosenUser.name = dictionary["name"] as? String
             chosenUser.email = dictionary["email"] as? String
             chosenUser.fbId = dictionary["fbId"] as? String
-            chosenUser.location = dictionary["location"] as? String
+            chosenUser.address = dictionary["address"] as? String
+            chosenUser.city = dictionary["city"] as? String
+            chosenUser.province = dictionary["province"] as? String
             chosenUser.imageUrl = dictionary["imageUrl"] as? String
+            chosenUser.latitude = dictionary["latitude"] as? Double
+            chosenUser.longitude = dictionary["longitude"] as? Double
+            chosenUser.age = dictionary["age"] as? String
+            chosenUser.gender = dictionary["gender"] as? String
             let layout = UICollectionViewFlowLayout()
             let newMessageController = NewMessagesCollectionViewController(collectionViewLayout: layout)
             let navNewMessageController = UINavigationController(rootViewController: newMessageController)
@@ -104,5 +112,27 @@ class MessageListController: UICollectionViewController, UICollectionViewDelegat
         }, withCancel: nil)
     }
 
-
+    private func setupViews() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "SETTINGS"), style: .plain, target: self, action: #selector(handleSettings))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogout))
+    }
+    
+    @objc func handleLogout() {
+        do {
+            try Auth.auth().signOut()
+            let loginManager = FBSDKLoginManager()
+            loginManager.logOut()
+            let loginController = LoginController()
+            self.present(loginController, animated: true, completion: nil)
+        } catch let err {
+            print("Could not log out", err)
+            return
+        }
+    }
+    
+    @objc func handleSettings() {
+        let settingsController = SettingsViewController()
+        let navSettings = UINavigationController(rootViewController: settingsController)
+        present(navSettings, animated: true)
+    }
 }

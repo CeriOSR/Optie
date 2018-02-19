@@ -14,11 +14,14 @@ struct OptieUser {
     var email: String?
     var name: String?
     var fbId: String?
-    var location: String?
     var imageUrl: String?
     var latitude: Double?
     var longitude: Double?
     var gender: String?
+    var city: String?
+    var province: String?
+    var address: String?
+    var age: String?
 }
 
 struct SkillLevelModel {
@@ -66,11 +69,34 @@ struct SettingsValues {
     var bio: String?
 }
 
-//class UserSettings {  //singleton for the settings...lets work on this!
-//    var sharedInstance = SettingsValues()
-//    init(sharedInstance: SettingsValues) {
-//        self.sharedInstance = sharedInstance
-//    }
+struct UsersListPerDay {
+    var monday : [OptieUser]?
+    var sunday : [OptieUser]?
+    var saturday : [OptieUser]?
+    var friday : [OptieUser]?
+    var thursday : [OptieUser]?
+    var wednesday : [OptieUser]?
+    var tuesday : [OptieUser]?
+}
+
+struct DaysAndUsersDictionary {
+    var mondayUsers : UsersDayList?
+    var tuesdayUsers : UsersDayList?
+    var wednesdayUsers : UsersDayList?
+    var thursdayUsers : UsersDayList?
+    var fridayUsers : UsersDayList?
+    var saturdayUsers : UsersDayList?
+    var sundayUsers : UsersDayList?
+}
+
+//struct ArrayOfUsersPerDay {
+//    var monday : [OptieUser]?
+//    var sunday : [OptieUser]?
+//    var saturday : [OptieUser]?
+//    var friday : [OptieUser]?
+//    var thursday :[OptieUser]?
+//    var wednesday : [OptieUser]?
+//    var tuesday : [OptieUser]?
 //}
 
 

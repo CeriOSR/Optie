@@ -18,6 +18,7 @@ class LoginController: UIViewController, FBSDKLoginButtonDelegate, UITextFieldDe
     
     var user = OptieUser()
     let popupModel = PopupViewModel()
+    var location: String?
     
     let containerView : UIView = {
         let view = UIView()
@@ -86,7 +87,7 @@ class LoginController: UIViewController, FBSDKLoginButtonDelegate, UITextFieldDe
     lazy var fBLoginButton: FBSDKLoginButton = {
         let button = FBSDKLoginButton()
         button.delegate = self
-        button.readPermissions = ["email", "public_profile", "user_friends", "user_location"]
+        button.readPermissions = ["email", "public_profile", "user_friends", "user_location", "user_birthday"]
         return button
     }()
     
@@ -180,14 +181,32 @@ class LoginController: UIViewController, FBSDKLoginButtonDelegate, UITextFieldDe
             self.user.fbId = fbUser["id"] as? String
             self.user.name = fbUser["name"] as? String
             self.user.gender = fbUser["gender"] as? String
+            self.user.address = "FB User"
             let coordinates = fbUser["location"] as! [String: Any]
             let loc = coordinates["location"] as! [String: Any]
+            self.user.city = loc["city"] as? String
+            self.user.province = loc["state"] as? String
             self.user.latitude = loc["latitude"] as? Double
             self.user.longitude = loc["longitude"] as? Double
-            self.user.location = "\(String(describing: loc["city"]))" + " " + "\(String(describing: loc["state"]))" + " " + "\(String(describing: loc["country"]))"
-            let user = ["email": self.user.email, "fbid": self.user.fbId, "name": self.user.name, "gender": self.user.gender, "location": self.user.location, "imageUrl": self.user.imageUrl]
+            var age = 0
+            guard let birthday = fbUser["birthday"] as? String else {return}
+            age = self.calcAge(birthday: birthday)
+            self.user.age = String(describing: age)
+            self.location = "\(String(describing: loc["city"]))" + " " + "\(String(describing: loc["state"]))" + " " + "\(String(describing: loc["country"]))"
+            let user = ["address": self.user.address, "email": self.user.email, "fbid": self.user.fbId, "name": self.user.name, "gender": self.user.gender, "imageUrl": self.user.imageUrl, "city": self.user.city, "province": self.user.province, "age": self.user.age]
             self.saveUserToDatabase(user: user as! [String : String])
         }
+    }
+    
+    private func calcAge(birthday:String) -> Int {
+        let dateFormater = DateFormatter()
+        dateFormater.dateFormat = "MM/dd/yyyy"
+        let birthdayDate = dateFormater.date(from: birthday)
+        let calendar: NSCalendar! = NSCalendar(calendarIdentifier: NSCalendar.Identifier.gregorian)
+        let now: NSDate! = NSDate()
+        let calcAge = calendar.components(.year, from: birthdayDate!, to: now as Date, options: [])
+        let age = calcAge.year
+        return age!
     }
     
     private func saveUserToDatabase(user: [String: String]) {
@@ -197,7 +216,7 @@ class LoginController: UIViewController, FBSDKLoginButtonDelegate, UITextFieldDe
             if error != nil {
                 print("Could not save user to firebase", error!)
             }
-            guard let location = self.user.location else {return}
+            guard let location = self.location else {return}
             var coordinates = CLLocationCoordinate2D()
             let nativeGeocoding = NativeGeocoding(location)
             let geocodingResult = GeocodingResult.init(location)

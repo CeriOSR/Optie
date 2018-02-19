@@ -15,19 +15,23 @@ import Firebase
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-    var settingValues = SettingsValues()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        
+//        let navAppearance = UINavigationBar.appearance()
+//        navAppearance.tintColor =
+        UINavigationBar.appearance().barTintColor = UIColor(r: 0, g: 122, b: 255)
+        UINavigationBar.appearance().tintColor = .white
+        UINavigationBar.appearance().titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.black]
+        UINavigationBar.appearance().isTranslucent = false
+        self.setupDefaults()
         FirebaseApp.configure()
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.makeKeyAndVisible()
         let tabBarController = TabBarController()
-        let navTabBarController = UINavigationController(rootViewController: tabBarController)
-        let rootViewController = navTabBarController
+        let rootViewController = tabBarController
         window?.rootViewController = rootViewController
         FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
-        let navAppearance = UINavigationBar.appearance()
-        navAppearance.tintColor = UIColor(r: 0, g: 122, b: 255)
         return true
     }
         
@@ -35,6 +39,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         let handled = FBSDKApplicationDelegate.sharedInstance().application(app, open: url, sourceApplication: options[UIApplicationOpenURLOptionsKey.sourceApplication] as! String, annotation: options[UIApplicationOpenURLOptionsKey.annotation])
         return handled
+    }
+    
+    func setupDefaults() {
+        let defaults = UserDefaults()
+        if defaults.string(forKey: "gender") == "" {
+            defaults.set("both", forKey: "gender")
+        }
+        if defaults.integer(forKey: "skillValue") == 0 {
+            defaults.set(0, forKey: "skillValue")
+        }
+        if defaults.double(forKey: "distance") == 0.0 {
+            defaults.set(100.0, forKey: "distance")
+        }
+        if defaults.integer(forKey: "ageValue") == 0 {
+            defaults.set(30, forKey: "ageValue")
+        }
+        defaults.set("", forKey: "bio")
+        let available = AvailabilityCollectionViewController()
+        available.settingsValues.ageValue = defaults.integer(forKey: "ageValue")
+        available.settingsValues.gender = defaults.string(forKey: "gender")
+        available.settingsValues.bio = defaults.string(forKey: "bio")
+        available.settingsValues.distance = defaults.double(forKey: "distance")
+        available.settingsValues.skillValue = defaults.integer(forKey: "skillValue")
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

@@ -14,7 +14,6 @@ import PromiseKit
 
 class RegisterController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate {
     
-//    var user : OptieUser?
     let popupModel = PopupViewModel()
     
     let containerView : UIView = {
@@ -198,10 +197,11 @@ class RegisterController: UIViewController, UIImagePickerControllerDelegate, UIN
     }
     
     func saveUserToDB(_ imageUrl: String) {
-        guard let name = nameTextField.text, let location = addressTextField.text, let email = emailTextField.text, let gender = genderSegmentControl.titleForSegment(at: genderSegmentControl.selectedSegmentIndex) else {return}
-        
+        guard let name = nameTextField.text, let email = emailTextField.text, let gender = genderSegmentControl.titleForSegment(at: genderSegmentControl.selectedSegmentIndex), let age = ageTextField.text else {return}
+        guard let address = addressTextField.text, let city = cityTextField.text, let province = provinceTextField.text else {return}
         guard let uid = Auth.auth().currentUser?.uid else {return}
-        let values = ["fbId": "non-fbUser", "name": name, "location": location, "email": email, "imageUrl": imageUrl, "gender": gender]
+        let location = address + " " + city + " " + province
+        let values = ["fbId": "non-fbUser", "name": name, "address": address, "city": city, "province": province, "email": email, "imageUrl": imageUrl, "gender": gender, "age": age]
         let databaseRef = Database.database().reference().child("user").child(uid)
         databaseRef.updateChildValues(values, withCompletionBlock: { (error, reference) in
             if error != nil {

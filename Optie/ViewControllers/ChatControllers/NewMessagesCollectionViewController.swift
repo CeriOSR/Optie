@@ -150,8 +150,9 @@ class NewMessagesCollectionViewController: UICollectionViewController, UICollect
         let layout = UICollectionViewFlowLayout()
         let messageListController = MessageListController(collectionViewLayout: layout)
         let navMessageListController = UINavigationController(rootViewController: messageListController)
-        present(navMessageListController, animated: true) {
-            
+        let tabBarController = TabBarController()
+        present(tabBarController, animated: true) {
+            tabBarController.selectedIndex = 2
         }
         
     }

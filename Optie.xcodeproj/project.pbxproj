@@ -195,13 +195,6 @@
 			path = CollectionViewCells;
 			sourceTree = "<group>";
 		};
-		E062A35A2013AA3B00B76BCA /* View */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
 		E06E962E1FB7F1CC00F13C0D /* Object Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -274,7 +267,6 @@
 		E0961FEB1FAF8CAF007B5970 /* Optie */ = {
 			isa = PBXGroup;
 			children = (
-				E062A35A2013AA3B00B76BCA /* View */,
 				E006908B1FE6F8AD00C4E94A /* CollectionViewCells */,
 				E06E962E1FB7F1CC00F13C0D /* Object Models */,
 				E09620221FAF9350007B5970 /* Extensions */,

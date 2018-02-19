@@ -231,22 +231,22 @@ class SportsController: UIViewController {
         }
                 
         let skillLevelController = SkillLevelController()
-        let navSkillLevelController = UINavigationController(rootViewController: skillLevelController)
-        self.present(navSkillLevelController, animated: true) {
+//        let navSkillLevelController = UINavigationController(rootViewController: skillLevelController)
+        self.present(skillLevelController, animated: true) {
             skillLevelController.availability = self.availability
         }
     }
     
-    @objc func handleBack() {
-        let profileController = ProfileController()
-        let navProfileController = UINavigationController(rootViewController: profileController)
-        self.present(navProfileController, animated: true, completion: nil)
-    }
+//    @objc func handleBack() {
+//        let profileController = ProfileController()
+//        let navProfileController = UINavigationController(rootViewController: profileController)
+//        self.present(navProfileController, animated: true, completion: nil)
+//    }
     
     func setupViews() {
         view.backgroundColor = self.view.tintColor
         navigationController?.navigationBar.backgroundColor = self.view.tintColor
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(handleBack))
+//        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleBack))
         view.addSubview(sportsContainerView)
 
         sportsContainerView.anchors(top: view.safeTopAnchor, bottom: view.safeBottomAnchor, left: view.safeLeftAnchor, right: view.safeRightAnchor, paddingTop: 10, paddingBottom: -10, paddingLeft: 10, paddingRight: -10)

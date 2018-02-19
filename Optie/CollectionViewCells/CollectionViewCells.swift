@@ -32,15 +32,9 @@ class AvailabilityCell: BaseCell, UICollectionViewDataSource, UICollectionViewDe
     var availableUsers = UsersDayList()
     var users = [OptieUser](){
         didSet{
-            
-            //PUT A TIMER ON RELOAD HERE
-//            timer.invalidate()
-//            timer.fire()
-//            timer = Timer(timeInterval: 0.2, repeats: false, block: { (timer) in
-                DispatchQueue.main.async(execute: {
-                    self.dayCollectionView.reloadData()
-                })
-//            })
+            DispatchQueue.main.async(execute: {
+                self.dayCollectionView.reloadData()
+            })
         }
     }
     let dayLabel: UILabel = {
@@ -98,7 +92,6 @@ class AvailabilityCell: BaseCell, UICollectionViewDataSource, UICollectionViewDe
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
         let user = self.users[indexPath.item]
         availabilityController?.showChosenUserController(user: user)
         
@@ -222,8 +215,6 @@ class MessageListCell: BaseCell {
         userImage.anchors(top: containerView.topAnchor, bottom: containerView.bottomAnchor, left: containerView.leftAnchor, right: containerView.rightAnchor, paddingTop: 6, paddingBottom: -6, paddingLeft: 10, paddingRight: -290)
         userNameLabel.anchors(top: containerView.topAnchor, bottom: containerView.bottomAnchor, left: userImage.rightAnchor, right: containerView.safeRightAnchor, paddingTop: 2, paddingBottom: -20, paddingLeft: 4, paddingRight: -18, height: 30)
         messageLabel.anchors(top: userNameLabel.bottomAnchor, bottom: containerView.bottomAnchor, left: userImage.rightAnchor, right: containerView.rightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 4, paddingRight: -90)
-//        dateLabel.anchors(top: userNameLabel.bottomAnchor, bottom: containerView.bottomAnchor, left: messageLabel.rightAnchor, right: containerView.rightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 4, paddingRight: -18)
-        
     }
     
     override func prepareForReuse() {

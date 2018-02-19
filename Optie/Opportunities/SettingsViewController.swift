@@ -71,7 +71,7 @@ class SettingsViewController: UIViewController {
     }()
     
     let genderSegmentControl: UISegmentedControl = {
-        let segCon = UISegmentedControl(items: ["Female", "Male", "Both"])
+        let segCon = UISegmentedControl(items: ["female", "male", "both"])
         segCon.tintColor = .white
         segCon.selectedSegmentIndex = 0
         return segCon
@@ -161,11 +161,26 @@ class SettingsViewController: UIViewController {
         let skill: Int = Int(round(skillLevelSlider.value))
         self.settingsValues.skillValue = skill
         self.settingsValues.ageValue = Int(ageLevelSlider.value)
-        self.settingsValues.bio = bioTextView.text ?? ""
+        guard let bio = bioTextView.text else {return}
+        self.settingsValues.bio = bio
+        
+        let defaults = UserDefaults()
+        defaults.set(self.settingsValues.gender, forKey: "gender")
+        defaults.set(distance, forKey: "distance")
+        defaults.set(skill, forKey: "skillValue")
+        defaults.set(self.settingsValues.ageValue, forKey: "ageValue")
+        defaults.set(bio, forKey: "bio")
+        
+        
+        
+        
+        
+        
+        
+        
         let tabBarController = TabBarController()
-        let navTabBar = UINavigationController(rootViewController: tabBarController)
         tabBarController.settingsValues = self.settingsValues   //put this here so it happens before the viewDidAppear
-        self.present(navTabBar, animated: true) {
+        self.present(tabBarController, animated: true) {
             //dont pass data here if you need it before the viewdidappear
         }
     }
