@@ -25,6 +25,7 @@ class NewMessagesCollectionViewController: UICollectionViewController, UICollect
     
     let containerView: UIView = {
         let cv = UIView()
+        cv.translatesAutoresizingMaskIntoConstraints = false
         cv.backgroundColor = UIColor(r: 13, g: 31, b: 61)
         return cv
     }()
@@ -47,13 +48,13 @@ class NewMessagesCollectionViewController: UICollectionViewController, UICollect
     func setupView() {
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Messages", style: .plain, target: self, action: #selector(handleBack))
         collectionView?.backgroundColor = self.view.tintColor
-        view.addSubview(containerView)
-        containerView.anchors(top: self.collectionView?.safeBottomAnchor, bottom: self.view.safeBottomAnchor, left: self.view.safeLeftAnchor, right: self.view.safeRightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, height: 50)
-        containerView.addSubview(chatTextField)
-        containerView.addSubview(sendButton)
-        containerView.addConstraintsWithVisualFormat(format: "H:|-2-[v0]-4-[v1(60)]-2-|", views: chatTextField, sendButton)
-        containerView.addConstraintsWithVisualFormat(format: "V:|[v0]|", views: chatTextField)
-        containerView.addConstraintsWithVisualFormat(format: "V:|[v0]|", views: sendButton)
+//        view.addSubview(containerView)
+//        containerView.anchors(top: self.collectionView?.safeBottomAnchor, bottom: self.view.safeBottomAnchor, left: self.view.safeLeftAnchor, right: self.view.safeRightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, height: 50)
+//        containerView.addSubview(chatTextField)
+//        containerView.addSubview(sendButton)
+//        containerView.addConstraintsWithVisualFormat(format: "H:|-2-[v0]-4-[v1(60)]-2-|", views: chatTextField, sendButton)
+//        containerView.addConstraintsWithVisualFormat(format: "V:|[v0]|", views: chatTextField)
+//        containerView.addConstraintsWithVisualFormat(format: "V:|[v0]|", views: sendButton)
     }
 
     override func viewDidLoad() {
@@ -68,30 +69,30 @@ class NewMessagesCollectionViewController: UICollectionViewController, UICollect
         fetchMessages()
     }
     
-//    override var inputAccessoryView: UIView?
-//    {
-//        get{
-//            let containerView = UIView()
-//            containerView.backgroundColor = .gray
-//            containerView.translatesAutoresizingMaskIntoConstraints = false
-//            containerView.frame = CGRect(x:0, y: 100, width: view.frame.width, height: 50)
-////            containerView.bottomAnchor.constraintEqualToSystemSpacingBelow(self.view.safeBottomAnchor, multiplier: 0).isActive = true
-////            containerView.heightAnchor.constraint(equalToConstant: 50).isActive = true
-////            containerView.leftAnchor.constraintEqualToSystemSpacingAfter(self.view.safeLeftAnchor, multiplier: 0).isActive = true
-////            containerView.rightAnchor.constraintEqualToSystemSpacingAfter(self.view.safeRightAnchor, multiplier: 0).isActive = true
-//            containerView.addSubview(chatTextField)
-//            containerView.addSubview(sendButton)
-//            containerView.addConstraintsWithVisualFormat(format: "H:|-2-[v0]-4-[v1(60)]-2-|", views: chatTextField, sendButton)
-//            containerView.addConstraintsWithVisualFormat(format: "V:|[v0]|", views: chatTextField)
-//            containerView.addConstraintsWithVisualFormat(format: "V:|[v0]|", views: sendButton)
-//            containerView.backgroundColor = .gray
-//            return containerView
-//        }
-//    }  
-//
-//    override var canBecomeFirstResponder: Bool{
-//        return true
-//    }
+    lazy var inputContainerView : UIView = {
+        let containerView = UIView()
+        containerView.backgroundColor = .gray
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        containerView.frame = CGRect(x:0, y: 100, width: self.view.frame.width, height: 65)
+        containerView.addSubview(chatTextField)
+        containerView.addSubview(sendButton)
+        containerView.addConstraintsWithVisualFormat(format: "H:|-2-[v0]-4-[v1(60)]-2-|", views: chatTextField, sendButton)
+        containerView.addConstraintsWithVisualFormat(format: "V:|[v0(50)]", views: chatTextField)
+        containerView.addConstraintsWithVisualFormat(format: "V:|[v0(50)]", views: sendButton)
+        return containerView
+    }()
+    
+    override var inputAccessoryView: UIView?
+    {
+        get{
+            
+            return inputContainerView
+        }
+    }
+
+    override var canBecomeFirstResponder: Bool{
+        return true
+    }
     
     
     
@@ -149,7 +150,7 @@ class NewMessagesCollectionViewController: UICollectionViewController, UICollect
     @objc func handleBack() {
         let layout = UICollectionViewFlowLayout()
         let messageListController = MessageListController(collectionViewLayout: layout)
-        let navMessageListController = UINavigationController(rootViewController: messageListController)
+//        let navMessageListController = UINavigationController(rootViewController: messageListController)
         let tabBarController = TabBarController()
         present(tabBarController, animated: true) {
             tabBarController.selectedIndex = 2

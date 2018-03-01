@@ -24,19 +24,87 @@ class BaseCell: UICollectionViewCell {
     }
 }
 
-class AvailabilityCell: BaseCell, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+class AvailabilityCell: BaseCell, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UICollectionViewDataSourcePrefetching {
     
     var timer = Timer()
-    var availabilityController : AvailabilityCollectionViewController?
+    weak var availabilityController : AvailabilityCollectionViewController?
     private  let dayCell = "dayCell"
     var availableUsers = UsersDayList()
+    var availability = AvailabilityModel()
+    var skill = SkillLevelModel()
     var users = [OptieUser](){
         didSet{
+            for user in users {
+                guard let urlString = user.imageUrl else {return}
+                self.returnImage(urlString: urlString)
+            }
             DispatchQueue.main.async(execute: {
                 self.dayCollectionView.reloadData()
             })
         }
     }
+    
+    ///////////////////////////////////////-PREFETCHING FUNCTIONS IMAGES- ///////////////////////////////////////////////////////////////////////////////////
+    
+    var imageArray = [UIImage?]()
+    var tasks = [URLSessionDataTask?]()
+    
+    func urlComponents(index: Int) -> URL {
+        
+        var baseUrl = URL(string: "placeholder")
+        guard let url = users[index].imageUrl else {return baseUrl!}
+        baseUrl = URL(string: url)
+        return baseUrl!
+    }
+    
+    func getTask(forIndex: IndexPath, imageUrl: String) -> URLSessionDataTask {
+
+        let imgURL = urlComponents(index: forIndex.item)
+        return URLSession.shared.dataTask(with: imgURL, completionHandler: { (data, response, error) in
+            guard let data = data, error == nil else {return}
+            
+            DispatchQueue.main.async(execute: {
+                let image = UIImage(data: data)!
+                self.imageArray[forIndex.item] = image
+//                self.imageArray.append(image)
+                self.dayCollectionView.reloadItems(at: [forIndex])
+            })
+        })
+    }
+    
+    func requestImage(forIndex: IndexPath, imageUrl: String) {
+        var task: URLSessionDataTask
+        if imageArray[forIndex.row] != nil {
+            // Image is already loaded
+            return
+        }
+        if self.tasks[forIndex.row] != nil
+            && self.tasks[forIndex.row]!.state == URLSessionTask.State.running {
+            // Wait for task to finish
+            return
+        }
+        task = getTask(forIndex: forIndex, imageUrl: imageUrl)
+        tasks[forIndex.row] = task
+        task.resume()
+    }
+    
+    func returnImage(urlString: String) {
+        var img : UIImage?
+        let url = NSURL(string: urlString)
+        URLSession.shared.dataTask(with: url! as URL, completionHandler: { (data, response, error) in
+            guard let data = data, error == nil else {return}
+            DispatchQueue.main.async {
+                if let downloadedImage = UIImage(data: data) {
+                    img = downloadedImage
+                    self.imageArray.append(img!)
+                    self.dayCollectionView.reloadData()
+                }
+            }
+        }).resume()
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
     let dayLabel: UILabel = {
         let label = UILabel()
         return label
@@ -55,6 +123,8 @@ class AvailabilityCell: BaseCell, UICollectionViewDataSource, UICollectionViewDe
     }()
     
     override func setupViews() {
+        super.setupViews()
+        dayCollectionView.prefetchDataSource = self
         
         dayCollectionView.backgroundColor = UIColor(r: 24, g: 56, b: 98)
         addSubview(dayCollectionView)
@@ -76,9 +146,30 @@ class AvailabilityCell: BaseCell, UICollectionViewDataSource, UICollectionViewDe
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: dayCell, for: indexPath) as! DayCell
         let user: OptieUser = self.users[indexPath.item]
+        
         cell.nameLabel.text = user.name
         guard let imageUrl = user.imageUrl else {return cell}
         cell.userImage.loadEventImageUsingCacheWithUrlString(urlString: imageUrl)
+        
+        
+        if let userId = user.uid {
+            fetchUserAvailabilityAndSkill(userId: userId)
+        }
+        if availability.haveCar == true {
+            cell.carImageView.isHidden = false
+            cell.carImageView.image = UIImage(named: "CAR_SMALL")?.withRenderingMode(.alwaysOriginal)
+        } else {
+            cell.carImageView.isHidden = true
+        }
+        if let gender = user.gender?.first, let age = user.age {
+            
+                let genderAndAge = "\(gender)" + ", " + "\(String(describing: age))"
+                cell.genderAgeLabel.text = genderAndAge
+        }
+        if let skill = self.skill.skillLevel {
+            cell.skillLabel.text = String(describing: skill)
+        }
+        
         
         return cell
     }
@@ -95,6 +186,50 @@ class AvailabilityCell: BaseCell, UICollectionViewDataSource, UICollectionViewDe
         let user = self.users[indexPath.item]
         availabilityController?.showChosenUserController(user: user)
         
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        
+//        for indexPath in indexPaths {
+//            let user = users[indexPath.item]
+//            guard let imageUrl = user.imageUrl else {return}
+//            let cell = dayCollectionView.dequeueReusableCell(withReuseIdentifier: dayCell, for: indexPath) as! DayCell
+//            cell.userImage.loadEventImageUsingCacheWithUrlString(urlString: imageUrl)
+//        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
+//        for indexPath in indexPaths {
+////            if let task = tasks[indexPath.row] {
+////                if task.state != URLSessionTask.State.canceling {
+////                    task.cancel()
+////                }
+////            }
+//        }
+    }
+    
+    private func fetchUserAvailabilityAndSkill(userId: String) {
+        let userProfileRef = Database.database().reference().child("userProfile").child(userId)
+        userProfileRef.observeSingleEvent(of: .value, with: { (snapshot) in
+            let dictionary = snapshot.value as! [String:Any]
+            self.availability.bio = dictionary["bio"] as? String
+            self.availability.haveCar = dictionary["haveCar"] as? Bool
+            self.availability.userType = dictionary["userType"] as? String
+            self.availability.monday = dictionary["monday"] as? Bool
+            self.availability.tuesday = dictionary["tuesday"] as? Bool
+            self.availability.wednesday = dictionary["wednesday"] as? Bool
+            self.availability.thursday = dictionary["thursday"] as? Bool
+            self.availability.friday = dictionary["friday"] as? Bool
+            self.availability.saturday = dictionary["saturday"] as? Bool
+            self.availability.sunday = dictionary["sunday"] as? Bool
+            self.skill.skillLevel = dictionary["skillLevel"] as? Int
+            self.skill.skillQ1 = dictionary["skillQ1"] as? Bool
+            self.skill.skillQ2 = dictionary["skillQ2"] as? Bool
+            self.skill.skillQ3 = dictionary["skillQ3"] as? Bool
+            self.skill.skillQ4 = dictionary["skillQ4"] as? Bool
+            self.skill.skillQ5 = dictionary["skillQ5"] as? Bool
+            
+        }, withCancel: nil)
     }
     
     override func prepareForReuse() {
@@ -123,22 +258,80 @@ class DayCell: BaseCell {
         return image
     }()
     
+    let carImageView : UIImageView = {
+        let image = UIImageView()
+        image.contentMode = .scaleAspectFill
+        image.isHidden = true
+        image.layer.borderWidth = 1.0
+        image.layer.borderColor = UIColor.lightGray.cgColor
+        image.layer.cornerRadius = 14
+        image.layer.masksToBounds = true
+        image.isUserInteractionEnabled = true
+        image.image = UIImage(named: "CAR_SMALL")?.withRenderingMode(.alwaysOriginal)
+        image.translatesAutoresizingMaskIntoConstraints = false
+        return image
+    }()
+    
+    let skillLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.backgroundColor = .clear
+        label.layer.borderWidth = 1.0
+        label.layer.borderColor = UIColor.lightGray.cgColor
+        label.layer.cornerRadius = 14
+        label.layer.masksToBounds = true
+        label.textAlignment = .center
+        label.font = UIFont.systemFont(ofSize: 10)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let genderAgeLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.backgroundColor = .clear
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
     
     override func setupViews() {
         backgroundColor = UIColor(r: 13, g: 31, b: 61)
         addSubview(nameLabel)
         addSubview(userImage)
+        addSubview(genderAgeLabel)
+        addSubview(skillLabel)
+        addSubview(carImageView)
         
         addConstraintsWithVisualFormat(format: "H:|-10-[v0]-10-|", views: nameLabel)
         addConstraintsWithVisualFormat(format: "H:|-10-[v0(70)]|", views: userImage)
         addConstraintsWithVisualFormat(format: "V:|-36-[v0(70)]", views: userImage)
         addConstraintsWithVisualFormat(format: "V:[v0(40)]-10-|", views: nameLabel)
+        
+        skillLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 36).isActive = true
+        skillLabel.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -20).isActive = true
+        skillLabel.widthAnchor.constraint(equalToConstant: 28).isActive = true
+        skillLabel.heightAnchor.constraint(equalToConstant: 28).isActive = true
+        
+        carImageView.topAnchor.constraint(equalTo: skillLabel.bottomAnchor, constant: 10).isActive = true
+        carImageView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -20).isActive = true
+        carImageView.widthAnchor.constraint(equalToConstant: 28).isActive = true
+        carImageView.heightAnchor.constraint(equalToConstant: 28).isActive = true
+        
+        genderAgeLabel.topAnchor.constraint(equalTo: carImageView.bottomAnchor, constant: 10).isActive = true
+        genderAgeLabel.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -5).isActive = true
+        genderAgeLabel.heightAnchor.constraint(equalToConstant: 28).isActive = true
+        genderAgeLabel.widthAnchor.constraint(equalToConstant: 60).isActive = true
     }
     
     override func prepareForReuse() {
         super.prepareForReuse()
         nameLabel.text = ""
         userImage.image = nil
+        skillLabel.text = ""
+        carImageView.image = nil
+        genderAgeLabel.text = ""
     }
 }
 
@@ -257,3 +450,5 @@ class NewMessageCell: BaseCell {
         chatTextView.text = nil
     }
 }
+
+

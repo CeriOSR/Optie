@@ -54,23 +54,7 @@ class ChosenUserProfileController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    
 
-    
-    let skillLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .white
-        label.backgroundColor = .clear
-        label.layer.borderWidth = 1.0
-        label.layer.borderColor = UIColor.lightGray.cgColor
-        label.layer.cornerRadius = 10
-        label.layer.masksToBounds = true
-        label.textAlignment = .center
-        label.font = UIFont.systemFont(ofSize: 10)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
     let userImage : UIImageView = {
         let image = UIImageView()
         image.contentMode = .scaleAspectFill
@@ -96,6 +80,20 @@ class ChosenUserProfileController: UIViewController {
         image.image = UIImage(named: "CAR_SMALL")?.withRenderingMode(.alwaysOriginal)
         image.translatesAutoresizingMaskIntoConstraints = false
         return image
+    }()
+    
+    let skillLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.backgroundColor = .clear
+        label.layer.borderWidth = 1.0
+        label.layer.borderColor = UIColor.lightGray.cgColor
+        label.layer.cornerRadius = 10
+        label.layer.masksToBounds = true
+        label.textAlignment = .center
+        label.font = UIFont.systemFont(ofSize: 10)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
     }()
     
     let genderAgeLabel: UILabel = {
@@ -135,12 +133,6 @@ class ChosenUserProfileController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        //incorrect data passed PLEASE FIX
-        
-        print(chosenUser)
-        print(availability)
-        print(skill)
         
         handleOccupyFields()
         setupViews()

@@ -127,10 +127,11 @@ class ProfileController: UIViewController {
     }
     
     @objc func presentSportsController() {
-        let sportsController = SportsController()
-//        let navSportsController = UINavigationController(rootViewController: sportsController)
-        self.present(sportsController, animated: true) {
-            sportsController.user = self.user
+        let layout = UICollectionViewFlowLayout()
+        let profileViewController  = ProfileViewController(collectionViewLayout: layout) //SportsController()
+        let navProfileViewController = UINavigationController(rootViewController: profileViewController)
+        self.present(navProfileViewController, animated: true) {
+            profileViewController.user = self.user
         }
     }
     

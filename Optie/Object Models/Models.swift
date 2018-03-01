@@ -34,6 +34,7 @@ struct SkillLevelModel {
 }
 
 struct AvailabilityModel {
+    var bio: String?
     var userType: String?
     var haveCar: Bool?
     var monday: Bool?

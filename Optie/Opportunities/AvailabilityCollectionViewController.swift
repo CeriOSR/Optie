@@ -14,9 +14,10 @@ import CoreLocation
 
 private let reuseIdentifier = "Cell"
 
-class AvailabilityCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, CLLocationManagerDelegate {
-    
+class AvailabilityCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, CLLocationManagerDelegate, UICollectionViewDataSourcePrefetching {
+
     //put these freaking variables in a struct rey! dont be a moron!
+    let popupModels = PopupViewModel()
     var settingsValues = SettingsValues() 
     var locationManager = CLLocationManager()
     var chosenRange: Double = 100000.0
@@ -42,6 +43,7 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
     var availableUsersArray = [UsersDayList]()
     var availability = AvailabilityModel()
     var skill = SkillLevelModel()
+    var imageArray = [UIImage?]()
     var user: OptieUser? {
         didSet{
             navigationItem.title = user?.name
@@ -63,7 +65,6 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
 //            print(err)
 //        }
         setupSettingsDefaults()
-        print("ViewDidLoad **********************************************", settingsValues)
         setupViews()
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -112,14 +113,8 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
     }
     
     override func viewDidAppear(_ animated: Bool) {
-//        setupSettingsDefaults()
-        do {
-            try Auth.auth().signOut()
-        } catch let err {
-            print(err)
-        }
-//        checkIfUserIsLoggedIn()
-//        collectionView?.reloadData()
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+       fetchUser(uid)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -136,6 +131,10 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
             return 0
         }
         return days.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        checkIfUserIsLoggedIn()
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -235,28 +234,59 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
         }, withCancel: nil)
     }
     
+//    func checkIfUserProfileExist(uid: String) {
+//        let profileRef = Database.database().reference().child("userProfile").child(uid)
+//        profileRef.observeSingleEvent(of: .value, with: { (snapshot) in
+//            let dictionary = snapshot.value as? [String: AnyObject]
+//            if dictionary != nil {
+//                let tabBarController = TabBarController()
+//                self.present(tabBarController, animated: true, completion: {
+//                })
+//            } else {
+//                let profileController = ProfileController()
+//                let navProfileController = UINavigationController(rootViewController: profileController)
+//                self.present(navProfileController, animated: true, completion: nil)
+//            }
+//        }, withCancel: nil)
+//    }
+    
     func fetchUserProfile(_ uid: String) {
         let profileRef = Database.database().reference().child("userProfile").child(uid)
         profileRef.observeSingleEvent(of: .value, with: { (snapshot) in
-            let dictionary = snapshot.value as! [String: Any]
+            
+            let dictionary = snapshot.value as? [String: AnyObject]
+            if dictionary == nil {
+                //go to profileViewController
+                let alert = UIAlertController(title: "Please Setup Profile", message: "You must setup your profile to be able to see other users.", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action) in
+                    DispatchQueue.main.async {
+                        let layout = UICollectionViewFlowLayout()
+                        let profileViewController = ProfileViewController(collectionViewLayout: layout)
+                        let navProfile = UINavigationController(rootViewController: profileViewController)
+                        self.present(navProfile, animated: true, completion: nil)
+                        
+                    }
+                }))
+                self.present(alert, animated: true, completion: nil)
+            }
             var skill = SkillLevelModel()
             var availability = AvailabilityModel()
-            skill.skillLevel = dictionary["skillLevel"] as? Int
-            skill.skillQ1 = dictionary["skillQ1"] as? Bool
-            skill.skillQ2 = dictionary["skillQ2"] as? Bool
-            skill.skillQ3 = dictionary["skillQ3"] as? Bool
-            skill.skillQ4 = dictionary["skillQ4"] as? Bool
-            skill.skillQ5 = dictionary["skillQ5"] as? Bool
+            skill.skillLevel = dictionary?["skillLevel"] as? Int
+            skill.skillQ1 = dictionary?["skillQ1"] as? Bool
+            skill.skillQ2 = dictionary?["skillQ2"] as? Bool
+            skill.skillQ3 = dictionary?["skillQ3"] as? Bool
+            skill.skillQ4 = dictionary?["skillQ4"] as? Bool
+            skill.skillQ5 = dictionary?["skillQ5"] as? Bool
             
-            availability.userType = dictionary["userType"] as? String
-            availability.haveCar = dictionary["haveCar"] as? Bool
-            availability.monday = dictionary["monday"] as? Bool
-            availability.tuesday = dictionary["tuesday"] as? Bool
-            availability.wednesday = dictionary["wednesday"] as? Bool
-            availability.thursday = dictionary["thursday"] as? Bool
-            availability.friday = dictionary["friday"] as? Bool
-            availability.saturday = dictionary["saturday"] as? Bool
-            availability.sunday = dictionary["sunday"] as? Bool
+            availability.userType = dictionary?["userType"] as? String
+            availability.haveCar = dictionary?["haveCar"] as? Bool
+            availability.monday = dictionary?["monday"] as? Bool
+            availability.tuesday = dictionary?["tuesday"] as? Bool
+            availability.wednesday = dictionary?["wednesday"] as? Bool
+            availability.thursday = dictionary?["thursday"] as? Bool
+            availability.friday = dictionary?["friday"] as? Bool
+            availability.saturday = dictionary?["saturday"] as? Bool
+            availability.sunday = dictionary?["sunday"] as? Bool
             self.skill = skill
             self.availability = availability
             self.getAvailability(availability)
@@ -381,6 +411,26 @@ class AvailabilityCollectionViewController: UICollectionViewController, UICollec
                 self.collectionView?.reloadData()
             }
         }, withCancel: nil)
+    }
+    
+    func prefetchImages(_ user: OptieUser) {
+        var img : UIImage?
+        if let urlString = user.imageUrl {
+            let url = NSURL(string: urlString)
+            URLSession.shared.dataTask(with: url! as URL, completionHandler: { (data, response, error) in
+                if error != nil {
+                    let err = error! as NSError
+                    print(err)
+                    return
+                }
+                DispatchQueue.main.async {
+                    if let downloadedImage = UIImage(data: data!) {
+                        img = downloadedImage
+                        self.imageArray.append(img)
+                    }
+                }
+            }).resume()
+        }
     }
 }
 

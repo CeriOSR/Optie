@@ -170,14 +170,7 @@ class SettingsViewController: UIViewController {
         defaults.set(skill, forKey: "skillValue")
         defaults.set(self.settingsValues.ageValue, forKey: "ageValue")
         defaults.set(bio, forKey: "bio")
-        
-        
-        
-        
-        
-        
-        
-        
+  
         let tabBarController = TabBarController()
         tabBarController.settingsValues = self.settingsValues   //put this here so it happens before the viewDidAppear
         self.present(tabBarController, animated: true) {

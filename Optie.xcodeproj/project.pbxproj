@@ -16,6 +16,15 @@
 		E006908D1FE6F8C900C4E94A /* CollectionViewCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = E006908C1FE6F8C900C4E94A /* CollectionViewCells.swift */; };
 		E006908E1FE6F8C900C4E94A /* CollectionViewCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = E006908C1FE6F8C900C4E94A /* CollectionViewCells.swift */; };
 		E006908F1FE6F8C900C4E94A /* CollectionViewCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = E006908C1FE6F8C900C4E94A /* CollectionViewCells.swift */; };
+		E01D19D72044D0BC008ABF01 /* ImageGetter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E01D19D62044D0BC008ABF01 /* ImageGetter.swift */; };
+		E01D19D82044D0BC008ABF01 /* ImageGetter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E01D19D62044D0BC008ABF01 /* ImageGetter.swift */; };
+		E01D19D92044D0BC008ABF01 /* ImageGetter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E01D19D62044D0BC008ABF01 /* ImageGetter.swift */; };
+		E042B5D2203BE7C00081FE85 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E042B5D1203BE7C00081FE85 /* ProfileViewController.swift */; };
+		E042B5D3203BE7C00081FE85 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E042B5D1203BE7C00081FE85 /* ProfileViewController.swift */; };
+		E042B5D4203BE7C00081FE85 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E042B5D1203BE7C00081FE85 /* ProfileViewController.swift */; };
+		E042B5D6203BEDD70081FE85 /* ProfileCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E042B5D5203BEDD70081FE85 /* ProfileCell.swift */; };
+		E042B5D7203BEDD70081FE85 /* ProfileCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E042B5D5203BEDD70081FE85 /* ProfileCell.swift */; };
+		E042B5D8203BEDD70081FE85 /* ProfileCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E042B5D5203BEDD70081FE85 /* ProfileCell.swift */; };
 		E04753E920069605004EEFBB /* ChosenUserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E04753E820069605004EEFBB /* ChosenUserProfile.swift */; };
 		E04753EA20069605004EEFBB /* ChosenUserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E04753E820069605004EEFBB /* ChosenUserProfile.swift */; };
 		E04753EB20069605004EEFBB /* ChosenUserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E04753E820069605004EEFBB /* ChosenUserProfile.swift */; };
@@ -94,6 +103,9 @@
 		A7DB0D52888C5FE6198DB11F /* Pods_OptieTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OptieTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E00690871FE6F70100C4E94A /* AvailabilityCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailabilityCollectionViewController.swift; sourceTree = "<group>"; };
 		E006908C1FE6F8C900C4E94A /* CollectionViewCells.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewCells.swift; sourceTree = "<group>"; };
+		E01D19D62044D0BC008ABF01 /* ImageGetter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageGetter.swift; sourceTree = "<group>"; };
+		E042B5D1203BE7C00081FE85 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		E042B5D5203BEDD70081FE85 /* ProfileCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCell.swift; sourceTree = "<group>"; };
 		E04753E820069605004EEFBB /* ChosenUserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChosenUserProfile.swift; sourceTree = "<group>"; };
 		E05F36431FB8FC3F001898CE /* PopupsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupsModel.swift; sourceTree = "<group>"; };
 		E06E96311FB7F25600F13C0D /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
@@ -191,6 +203,7 @@
 			isa = PBXGroup;
 			children = (
 				E006908C1FE6F8C900C4E94A /* CollectionViewCells.swift */,
+				E042B5D5203BEDD70081FE85 /* ProfileCell.swift */,
 			);
 			path = CollectionViewCells;
 			sourceTree = "<group>";
@@ -201,6 +214,7 @@
 				E06E96311FB7F25600F13C0D /* Models.swift */,
 				E05F36431FB8FC3F001898CE /* PopupsModel.swift */,
 				E0EAD57D20278059009B5542 /* Geocoder.swift */,
+				E01D19D62044D0BC008ABF01 /* ImageGetter.swift */,
 			);
 			path = "Object Models";
 			sourceTree = "<group>";
@@ -229,6 +243,7 @@
 				E07BAC6A1FB83920008C1A52 /* SportsController.swift */,
 				E07BAC6E1FB83940008C1A52 /* SkillLevelView.swift */,
 				E04753E820069605004EEFBB /* ChosenUserProfile.swift */,
+				E042B5D1203BE7C00081FE85 /* ProfileViewController.swift */,
 			);
 			path = ProfileControllers;
 			sourceTree = "<group>";
@@ -689,8 +704,11 @@
 				E07BAC6B1FB83920008C1A52 /* SportsController.swift in Sources */,
 				E07352FF1FFD45C900BF77D4 /* TabBarController.swift in Sources */,
 				E07BAC671FB838FA008C1A52 /* ProfileController.swift in Sources */,
+				E01D19D72044D0BC008ABF01 /* ImageGetter.swift in Sources */,
 				E0961FEF1FAF8CAF007B5970 /* ViewController.swift in Sources */,
 				E0961FED1FAF8CAF007B5970 /* AppDelegate.swift in Sources */,
+				E042B5D6203BEDD70081FE85 /* ProfileCell.swift in Sources */,
+				E042B5D2203BE7C00081FE85 /* ProfileViewController.swift in Sources */,
 				E06E96361FB807CF00F13C0D /* RegisterController.swift in Sources */,
 				E07BAC6F1FB83940008C1A52 /* SkillLevelView.swift in Sources */,
 				E096201E1FAF922E007B5970 /* ViewExtensions.swift in Sources */,
@@ -707,12 +725,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E042B5D7203BEDD70081FE85 /* ProfileCell.swift in Sources */,
 				E006908E1FE6F8C900C4E94A /* CollectionViewCells.swift in Sources */,
 				E0EAD57F20278059009B5542 /* Geocoder.swift in Sources */,
 				E06E96331FB7F25600F13C0D /* Models.swift in Sources */,
 				E04753EA20069605004EEFBB /* ChosenUserProfile.swift in Sources */,
 				E07BAC6C1FB83920008C1A52 /* SportsController.swift in Sources */,
 				E0D7A4041FFEF9DA009550B9 /* NewMessagesCollectionViewController.swift in Sources */,
+				E042B5D3203BE7C00081FE85 /* ProfileViewController.swift in Sources */,
 				E07BAC701FB83940008C1A52 /* SkillLevelView.swift in Sources */,
 				E07353001FFD45C900BF77D4 /* TabBarController.swift in Sources */,
 				E0920C50202F9FAC00BDDD5E /* SettingsViewController.swift in Sources */,
@@ -721,6 +741,7 @@
 				E05F36451FB8FC3F001898CE /* PopupsModel.swift in Sources */,
 				E07BAC681FB838FA008C1A52 /* ProfileController.swift in Sources */,
 				E07353051FFD575A00BF77D4 /* MessageListController.swift in Sources */,
+				E01D19D82044D0BC008ABF01 /* ImageGetter.swift in Sources */,
 				E00690891FE6F70100C4E94A /* AvailabilityCollectionViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -729,12 +750,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E042B5D8203BEDD70081FE85 /* ProfileCell.swift in Sources */,
 				E006908F1FE6F8C900C4E94A /* CollectionViewCells.swift in Sources */,
 				E0EAD58020278059009B5542 /* Geocoder.swift in Sources */,
 				E06E96341FB7F25600F13C0D /* Models.swift in Sources */,
 				E04753EB20069605004EEFBB /* ChosenUserProfile.swift in Sources */,
 				E07BAC6D1FB83920008C1A52 /* SportsController.swift in Sources */,
 				E0D7A4051FFEF9DA009550B9 /* NewMessagesCollectionViewController.swift in Sources */,
+				E042B5D4203BE7C00081FE85 /* ProfileViewController.swift in Sources */,
 				E07BAC711FB83940008C1A52 /* SkillLevelView.swift in Sources */,
 				E07353011FFD45C900BF77D4 /* TabBarController.swift in Sources */,
 				E0920C51202F9FAC00BDDD5E /* SettingsViewController.swift in Sources */,
@@ -743,6 +766,7 @@
 				E05F36461FB8FC3F001898CE /* PopupsModel.swift in Sources */,
 				E07BAC691FB838FA008C1A52 /* ProfileController.swift in Sources */,
 				E07353061FFD575A00BF77D4 /* MessageListController.swift in Sources */,
+				E01D19D92044D0BC008ABF01 /* ImageGetter.swift in Sources */,
 				E006908A1FE6F70100C4E94A /* AvailabilityCollectionViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

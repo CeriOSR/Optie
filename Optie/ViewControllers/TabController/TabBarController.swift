@@ -27,10 +27,11 @@ class TabBarController: UITabBarController {
         availableUsersController.tabBarItem.title = "Available Users"
         availableUsersController.tabBarItem.image = #imageLiteral(resourceName: "GROUP_DARK")
         
-        let profileController = SportsController()
-//        let navProfileController = UINavigationController(rootViewController: profileController)
-        profileController.tabBarItem.title = "Profile"
-        profileController.tabBarItem.image = #imageLiteral(resourceName: "PROFILE_DARK")
+        let layout3 = UICollectionViewFlowLayout()
+        let profileViewController = ProfileViewController(collectionViewLayout: layout3) //SportsController()
+        let navProfileController = UINavigationController(rootViewController: profileViewController)
+        profileViewController.tabBarItem.title = "Profile"
+        profileViewController.tabBarItem.image = #imageLiteral(resourceName: "PROFILE_DARK")
         
         let layout2 = UICollectionViewFlowLayout()
         let messageListController = MessageListController(collectionViewLayout: layout2)
@@ -38,7 +39,7 @@ class TabBarController: UITabBarController {
         messageListController.tabBarItem.title = "Chat"
         messageListController.tabBarItem.image = #imageLiteral(resourceName: "MSG_DARK")
         
-        viewControllers = [navAvailableUsersController, profileController, navMessageListController]
+        viewControllers = [navAvailableUsersController, navProfileController, navMessageListController]
         availableUsersController.settingsValues = self.settingsValues
     }
     

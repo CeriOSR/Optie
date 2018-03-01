@@ -10,7 +10,7 @@ import UIKit
 
 class PopupViewModel: UIAlertController {
     
-    func createAlert(title: String, message: String) {
+    func createAlert(title: String, message: String) -> Void {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action) in
             return
