@@ -11,7 +11,7 @@ import Firebase
 
 private let reuseIdentifier = "Cell"
 
-class NewMessagesCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
+class NewMessagesCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDataSourcePrefetching, UITextFieldDelegate {
     
     let window = UIWindow(frame: UIScreen.main.bounds )
     var timer = Timer()
@@ -23,17 +23,11 @@ class NewMessagesCollectionViewController: UICollectionViewController, UICollect
         }
     }
     
-    let containerView: UIView = {
-        let cv = UIView()
-        cv.translatesAutoresizingMaskIntoConstraints = false
-        cv.backgroundColor = UIColor(r: 13, g: 31, b: 61)
-        return cv
-    }()
-    
-    let chatTextField: UITextField = {
+    lazy var chatTextField: UITextField = {
         let tf = UITextField()
         tf.allowsEditingTextAttributes = true
-        tf.placeholder = "message..."
+        tf.delegate = self
+        tf.attributedPlaceholder = NSAttributedString(string: "message...", attributes: [NSAttributedStringKey.foregroundColor : UIColor.lightGray])
         tf.textColor = .white
         return tf
     }()
@@ -48,19 +42,13 @@ class NewMessagesCollectionViewController: UICollectionViewController, UICollect
     func setupView() {
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Messages", style: .plain, target: self, action: #selector(handleBack))
         collectionView?.backgroundColor = self.view.tintColor
-//        view.addSubview(containerView)
-//        containerView.anchors(top: self.collectionView?.safeBottomAnchor, bottom: self.view.safeBottomAnchor, left: self.view.safeLeftAnchor, right: self.view.safeRightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, height: 50)
-//        containerView.addSubview(chatTextField)
-//        containerView.addSubview(sendButton)
-//        containerView.addConstraintsWithVisualFormat(format: "H:|-2-[v0]-4-[v1(60)]-2-|", views: chatTextField, sendButton)
-//        containerView.addConstraintsWithVisualFormat(format: "V:|[v0]|", views: chatTextField)
-//        containerView.addConstraintsWithVisualFormat(format: "V:|[v0]|", views: sendButton)
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
         self.collectionView!.register(NewMessageCell.self, forCellWithReuseIdentifier: reuseIdentifier)
+        collectionView?.alwaysBounceVertical = true
         collectionView?.keyboardDismissMode = .interactive
     }
     
@@ -71,12 +59,12 @@ class NewMessagesCollectionViewController: UICollectionViewController, UICollect
     
     lazy var inputContainerView : UIView = {
         let containerView = UIView()
-        containerView.backgroundColor = .gray
+        containerView.backgroundColor = UIColor(r: 13, g: 31, b: 61)
         containerView.translatesAutoresizingMaskIntoConstraints = false
         containerView.frame = CGRect(x:0, y: 100, width: self.view.frame.width, height: 65)
         containerView.addSubview(chatTextField)
         containerView.addSubview(sendButton)
-        containerView.addConstraintsWithVisualFormat(format: "H:|-2-[v0]-4-[v1(60)]-2-|", views: chatTextField, sendButton)
+        containerView.addConstraintsWithVisualFormat(format: "H:|-8-[v0]-4-[v1(60)]-8-|", views: chatTextField, sendButton)
         containerView.addConstraintsWithVisualFormat(format: "V:|[v0(50)]", views: chatTextField)
         containerView.addConstraintsWithVisualFormat(format: "V:|[v0(50)]", views: sendButton)
         return containerView
@@ -85,7 +73,6 @@ class NewMessagesCollectionViewController: UICollectionViewController, UICollect
     override var inputAccessoryView: UIView?
     {
         get{
-            
             return inputContainerView
         }
     }
@@ -130,6 +117,10 @@ class NewMessagesCollectionViewController: UICollectionViewController, UICollect
         return CGSize(width: view.frame.width, height: 70)
     }
     
+    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        fetchMessages()
+    }
+    
     private func setupCellWithUid(uid: String, cell: NewMessageCell, message: Message) {
         cell.addSubview(cell.containerView)
         if message.sender == uid {
@@ -159,12 +150,15 @@ class NewMessagesCollectionViewController: UICollectionViewController, UICollect
     }
     
     @objc func handleSend() {
+        guard let chatText = chatTextField.text else {return}
+        if chatText == "" {
+            return
+        }
         let randomId = NSUUID().uuidString
         guard let chosenUserUid = self.chosenUser?.uid else {return}
         guard let uid = Auth.auth().currentUser?.uid else {return}
-        guard let chatText = chatTextField.text else {popupModel.createAlert(title: "No message found.", message: "Please type a message.")
-            return
-        }
+        
+        
 //        let date = String(describing: Date())
         let date = String(describing: Date().timeIntervalSince1970)
 
@@ -181,6 +175,11 @@ class NewMessagesCollectionViewController: UICollectionViewController, UICollect
 
             self.chatTextField.text = ""
         }
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        handleSend()
+        return true
     }
     
     private func fetchMessages() {
