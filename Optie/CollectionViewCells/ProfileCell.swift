@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 class ProfileCell: BaseCell {
     
@@ -517,7 +518,154 @@ class ProfileCell: BaseCell {
         }
     }
     
+    func setSkillModel() -> SkillLevelModel {
+        var skillLevel = SkillLevelModel()
+        
+        if self.typeSwitch1.isEnabled == true {
+            skillLevel.skillQ1 = true
+        } else {
+            skillLevel.skillQ1 = false
+        }
+        if self.typeSwitch2.isOn == true {
+            skillLevel.skillQ2 = true
+        } else {
+            skillLevel.skillQ2 = false
+        }
+        if self.typeSwitch3.isOn == true {
+            skillLevel.skillQ3 = true
+        } else {
+            skillLevel.skillQ3 = false
+        }
+        if self.typeSwitch4.isOn == true {
+            skillLevel.skillQ4 = true
+        } else {
+            skillLevel.skillQ4 = false
+        }
+        if self.typeSwitch5.isOn == true {
+            skillLevel.skillQ5 = true
+        } else {
+            skillLevel.skillQ5 = false
+        }
+        return skillLevel
+    }
     
+    func setAvailabilityModel() -> AvailabilityModel {
+        var availability = AvailabilityModel()
+        availability.userType = sportsSegmentControl.titleForSegment(at: sportsSegmentControl.selectedSegmentIndex)
+        if carSegmentControl.selectedSegmentIndex == 0 {
+            availability.haveCar = true
+        } else {
+            availability.haveCar = false
+        }
+        if mondaySwitch.isOn == true {
+            availability.monday = true
+        } else {
+            availability.monday = false
+        }
+        if tuesdaySwitch.isOn == true {
+            availability.tuesday = true
+        } else {
+            availability.tuesday = false
+        }
+        if wednesdaySwitch.isOn == true {
+            availability.wednesday = true
+        } else {
+            availability.wednesday = false
+        }
+        if thursdaySwitch.isOn == true {
+            availability.thursday = true
+        } else {
+            availability.thursday = false
+        }
+        if fridaySwitch.isOn == true {
+            availability.friday = true
+        } else {
+            availability.friday = false
+        }
+        if saturdaySwitch.isOn == true {
+            availability.saturday = true
+        } else {
+            availability.saturday = false
+        }
+        if sundaySwitch.isOn == true {
+            availability.sunday = true
+        } else {
+            availability.sunday = false
+        }
+        
+        return availability
+    }
     
-    
+    func saveProfileToDatabase(){
+        let skillLevel = setSkillModel()
+        let availability = setAvailabilityModel()
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        let values = [
+            "bio": bioTextView.text,
+            "skillLevel": roundf(skillLevelSlider.value),
+            "skillQ1": skillLevel.skillQ1 as Any,
+            "skillQ2": skillLevel.skillQ2 as Any,
+            "skillQ3": skillLevel.skillQ3 as Any,
+            "skillQ4": skillLevel.skillQ4 as Any,
+            "skillQ5": skillLevel.skillQ5 as Any,
+            "userType": availability.userType as Any,
+            "haveCar": availability.haveCar as Any,
+            "monday": availability.monday as Any,
+            "tuesday": availability.tuesday as Any,
+            "wednesday": availability.wednesday as Any,
+            "thursday": availability.thursday as Any,
+            "friday": availability.friday as Any,
+            "saturday": availability.saturday as Any,
+            "sunday" : availability.sunday as Any
+            ] as [String: Any]
+        let profileRef = Database.database().reference().child("userProfile").child(uid)
+        profileRef.updateChildValues(values) { (error, ref) in
+            if error != nil {
+                print("Could not save profile", error ?? "unknown error")
+                return
+            }
+            let availabilityRef = Database.database().reference().child("availability")
+            if availability.monday == true {
+                availabilityRef.child("Monday").updateChildValues([uid:"Monday"])
+            } else {
+                availabilityRef.child("Monday").child(uid).removeValue()
+            }
+            
+            if availability.tuesday == true {
+                availabilityRef.child("Tuesday").updateChildValues([uid:"Tuesday"])
+            }else {
+                availabilityRef.child("Monday").child(uid).removeValue()
+            }
+            
+            if availability.wednesday == true {
+                availabilityRef.child("Wednesday").updateChildValues([uid:"Wednesday"])
+            }else {
+                availabilityRef.child("Monday").child(uid).removeValue()
+            }
+            
+            if availability.thursday == true {
+                availabilityRef.child("Thursday").updateChildValues([uid:"Thursday"])
+            }else {
+                availabilityRef.child("Monday").child(uid).removeValue()
+            }
+            
+            if availability.friday == true {
+                availabilityRef.child("Friday").updateChildValues([uid:"Friday"])
+            }else {
+                availabilityRef.child("Monday").child(uid).removeValue()
+            }
+            
+            if availability.saturday == true {
+                availabilityRef.child("Saturday").updateChildValues([uid:"Saturday"])
+            }else {
+                availabilityRef.child("Monday").child(uid).removeValue()
+            }
+            
+            if availability.sunday == true {
+                availabilityRef.child("Sunday").updateChildValues([uid:"Sunday"])
+            }else {
+                availabilityRef.child("Monday").child(uid).removeValue()
+            }
+        }
+    }
 }

@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreLocation
+import Alamofire
 
 extension UIView {
     
@@ -85,20 +86,36 @@ extension UIImageView {
             self.image = cacheImage
             return
         } else {
-            let url = NSURL(string: urlString)
-            URLSession.shared.dataTask(with: url! as URL, completionHandler: { (data, response, error) in
-                if error != nil {
-                    let err = error! as NSError
-                    print(err)
-                    return
-                }
-                DispatchQueue.main.async {
-                    if let downloadedImage = UIImage(data: data!) {
-                        imageCache.setObject(downloadedImage, forKey: urlString as AnyObject)
-                        self.image = downloadedImage
+            
+            
+            guard let url = URL(string: urlString) else {return}
+//            let url = NSURL(string: urlString)
+//            URLSession.shared.dataTask(with: url! as URL, completionHandler: { (data, response, error) in
+//                if error != nil {
+//                    let err = error! as NSError
+//                    print(err)
+//                    return
+//                }
+//                DispatchQueue.main.async {
+//                    if let downloadedImage = UIImage(data: data!) {
+//                        imageCache.setObject(downloadedImage, forKey: urlString as AnyObject)
+//                        self.image = downloadedImage
+//                    }
+//                }
+//            }).resume()
+            Alamofire.request(url).response(completionHandler: { (response) in
+                if response.error != nil {
+                    print(response.error ?? "No Image Found")
+                } else {
+                    guard let data = response.data else {return}
+                    if let image = UIImage(data: data) {
+                        imageCache.setObject(image, forKey: urlString as AnyObject)
+                        self.image = image
                     }
+                    
                 }
-            }).resume()
+            })
+            
         }
     }
 }

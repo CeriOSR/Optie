@@ -139,8 +139,8 @@ class NewMessagesCollectionViewController: UICollectionViewController, UICollect
     }
     
     @objc func handleBack() {
-        let layout = UICollectionViewFlowLayout()
-        let messageListController = MessageListController(collectionViewLayout: layout)
+//        let layout = UICollectionViewFlowLayout()
+//        let messageListController = MessageListController(collectionViewLayout: layout)
 //        let navMessageListController = UINavigationController(rootViewController: messageListController)
         let tabBarController = TabBarController()
         present(tabBarController, animated: true) {
